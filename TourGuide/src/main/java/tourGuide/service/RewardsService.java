@@ -2,6 +2,8 @@ package tourGuide.service;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import gpsUtil.GpsUtil;
@@ -14,6 +16,9 @@ import tourGuide.user.UserReward;
 
 @Service
 public class RewardsService {
+	
+	private Logger logger = LoggerFactory.getLogger(RewardsService.class);
+	
     private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
 
 	// proximity in miles
@@ -36,6 +41,13 @@ public class RewardsService {
 		proximityBuffer = defaultProximityBuffer;
 	}
 	
+	/**
+	 * This function gets all VisitedLocation for a User, then gets all Attractions provided by GpsUtils.
+	 * Everytime we call this function, it checks on user location history (why all history ?), if it has no previous UserReward on specific attraction
+	 * then if the attraction is close enough ( function nearAttraction ) we add a Reward to the user.
+	 * 
+	 * @param user
+	 */
 	public void calculateRewards(User user) {
 		List<VisitedLocation> userLocations = user.getVisitedLocations();
 		List<Attraction> attractions = gpsUtil.getAttractions();
@@ -45,16 +57,29 @@ public class RewardsService {
 				if(user.getUserRewards().stream().filter(r -> r.attraction.attractionName.equals(attraction.attractionName)).count() == 0) {
 					if(nearAttraction(visitedLocation, attraction)) {
 						user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
+						logger.debug("user has rewards : {}", user.getUserName());
 					}
 				}
 			}
 		}
 	}
 	
+	/**
+	 * Test if distance between attraction and location is inferior to attractionProximityRange (200 miles).
+	 * @param attraction required
+	 * @param location required
+	 * @return true if distance is inferior to attractionProximityRange, false otherwise.
+	 */
 	public boolean isWithinAttractionProximity(Attraction attraction, Location location) {
 		return getDistance(attraction, location) > attractionProximityRange ? false : true;
 	}
 	
+	/**
+	 * Test if distance between attraction and visitedlocation is inferior to proximityBuffer.
+	 * @param visitedLocation required
+	 * @param attraction required
+	 * @return true if distance is inferior to proximityBuffer, false otherwise.
+	 */
 	private boolean nearAttraction(VisitedLocation visitedLocation, Attraction attraction) {
 		return getDistance(attraction, visitedLocation.location) > proximityBuffer ? false : true;
 	}

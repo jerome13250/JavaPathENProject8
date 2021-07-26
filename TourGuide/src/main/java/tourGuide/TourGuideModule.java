@@ -3,6 +3,8 @@ package tourGuide;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import gpsUtil.GpsUtil;
 import rewardCentral.RewardCentral;
 import tourGuide.service.RewardsService;
@@ -24,5 +26,11 @@ public class TourGuideModule {
 	public RewardCentral getRewardCentral() {
 		return new RewardCentral();
 	}
+	
+	@Bean
+	public ObjectMapper getObjectMapper() {
+		return new ObjectMapper();
+	}
+
 	
 }

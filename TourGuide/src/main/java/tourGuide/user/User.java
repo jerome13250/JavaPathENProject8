@@ -69,6 +69,11 @@ public class User {
 		visitedLocations.clear();
 	}
 	
+	//TODO: the condition is always false, delete ?
+	/**
+	 * The condition is absurd
+	 * @param userReward
+	 */
 	public void addUserReward(UserReward userReward) {
 		if(userRewards.stream().filter(r -> !r.attraction.attractionName.equals(userReward.attraction)).count() == 0) {
 			userRewards.add(userReward);

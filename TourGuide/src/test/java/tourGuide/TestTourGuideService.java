@@ -3,16 +3,26 @@ package tourGuide;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
+import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
+import tourGuide.dto.ClosestAttractionsDTO;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
@@ -21,12 +31,24 @@ import tripPricer.Provider;
 
 public class TestTourGuideService {
 
-	@Test
-	public void getUserLocation() {
+	TourGuideService tourGuideService;
+	RewardsService rewardsService;
+	
+	@Before
+	public void setup() {
+		//we have a bug in external jar GpsUtils due to String.format("%.6f", new Object[] { Double.valueOf(longitude) }))
+		//format uses Locale.getDefault() that create string Double with "," (Locale=FR) instead of "."
+		//For this reason i need to change the default Locale:
+		Locale.setDefault(Locale.US);
 		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+		rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+		ObjectMapper mapper = new ObjectMapper();
 		InternalTestHelper.setInternalUserNumber(0);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
+		tourGuideService = new TourGuideService(gpsUtil, rewardsService, mapper);
+	}
+	
+	@Test
+	public void getUserLocation() {		
 		
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
@@ -36,10 +58,7 @@ public class TestTourGuideService {
 	
 	@Test
 	public void addUser() {
-		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
-		InternalTestHelper.setInternalUserNumber(0);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
+		
 		
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		User user2 = new User(UUID.randomUUID(), "jon2", "000", "jon2@tourGuide.com");
@@ -58,10 +77,7 @@ public class TestTourGuideService {
 	
 	@Test
 	public void getAllUsers() {
-		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
-		InternalTestHelper.setInternalUserNumber(0);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
+		
 		
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		User user2 = new User(UUID.randomUUID(), "jon2", "000", "jon2@tourGuide.com");
@@ -79,10 +95,6 @@ public class TestTourGuideService {
 	
 	@Test
 	public void trackUser() {
-		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
-		InternalTestHelper.setInternalUserNumber(0);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
 		
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
@@ -95,10 +107,6 @@ public class TestTourGuideService {
 	@Ignore // Not yet implemented
 	@Test
 	public void getNearbyAttractions() {
-		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
-		InternalTestHelper.setInternalUserNumber(0);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
 		
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
@@ -110,11 +118,34 @@ public class TestTourGuideService {
 		assertEquals(5, attractions.size());
 	}
 	
+	
+	@Test
+	public void getClosest5Attractions() {
+		//ARRANGE:
+		tourGuideService.tracker.stopTracking();
+		
+		String userName = "jon";
+		User user = new User(UUID.randomUUID(), userName, "000", "jon@tourGuide.com");
+		
+		Location centralParkNY = new Location(40.782223, -73.965279); //central park New York
+		VisitedLocation fakeVisitedLocation = new VisitedLocation(user.getUserId(), centralParkNY, new Date());
+		user.addToVisitedLocations(fakeVisitedLocation);
+		rewardsService.calculateRewards(user);
+		tourGuideService.addUser(user);
+		
+		//ACT:
+		ClosestAttractionsDTO result = tourGuideService.getClosest5Attractions(userName);
+		
+		//ASSERT:
+		assertEquals(40.782223d, result.getUserLocation().latitude, 0.000001);
+		assertEquals(-73.965279d, result.getUserLocation().longitude, 0.000001);
+		assertEquals(5, result.getAttractionList().size());
+		assertEquals("Flatiron Building",result.getAttractionList().get(0).getAttractionName());
+		assertEquals(3.113d, result.getAttractionList().get(0).getDistance(), 0.001d);
+		
+	}
+	
 	public void getTripDeals() {
-		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
-		InternalTestHelper.setInternalUserNumber(0);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
 		
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 
