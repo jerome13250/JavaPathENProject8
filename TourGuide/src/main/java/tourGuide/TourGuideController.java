@@ -1,18 +1,15 @@
 package tourGuide;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.jsoniter.output.JsonStream;
 
 import gpsUtil.location.VisitedLocation;
-import tourGuide.dto.ClosestAttractionsDTO;
 import tourGuide.service.TourGuideService;
 import tourGuide.user.User;
 import tripPricer.Provider;
@@ -46,12 +43,12 @@ public class TourGuideController {
 	 * </ul>
      * 
      * @param userName the required user name
-     * @return returned object is a DTO, Spring converts it directly to JSON 
+     * @return JSON object containing all required infos
      */
     @RequestMapping("/getNearbyAttractions") 
-    public ClosestAttractionsDTO getNearbyAttractions(@RequestParam String userName) {
+    public String getNearbyAttractions(@RequestParam String userName) {
     	
-    	return tourGuideService.getClosest5Attractions(userName);
+    	return JsonStream.serialize(tourGuideService.getClosest5Attractions(userName));
     }
     
     @RequestMapping("/getRewards") 
@@ -59,19 +56,26 @@ public class TourGuideController {
     	return JsonStream.serialize(tourGuideService.getUserRewards(getUser(userName)));
     }
     
+    /**
+     * Get the list of every user's most recent location as JSON.
+     * <p>
+     * Note: if a user's current location history is not empty then it returns the latest position, otherwise gpsUtil  
+     * is used to get a valid position. This behavior is due to the provided function tourGuideService.getUserLocation().
+     * </p>
+     * <p>
+     * Return object should be the just a JSON mapping of userId to Locations similar to:<br>
+     * {
+     *     "019b04a9-067a-4c76-8817-ee75088c3822": {"longitude":-48.188821,"latitude":74.84371}
+     *     ...
+     * }
+     * </p>
+     * 
+     * @return
+     */
     @RequestMapping("/getAllCurrentLocations")
     public String getAllCurrentLocations() {
-    	// TODO: Get a list of every user's most recent location as JSON
-    	//- Note: does not use gpsUtil to query for their current location, 
-    	//        but rather gathers the user's current location from their stored location history.
-    	//
-    	// Return object should be the just a JSON mapping of userId to Locations similar to:
-    	//     {
-    	//        "019b04a9-067a-4c76-8817-ee75088c3822": {"longitude":-48.188821,"latitude":74.84371} 
-    	//        ...
-    	//     }
-    	
-    	return JsonStream.serialize("");
+    	    	
+    	return JsonStream.serialize(tourGuideService.getAllCurrentLocations());
     }
     
     @RequestMapping("/getTripDeals")

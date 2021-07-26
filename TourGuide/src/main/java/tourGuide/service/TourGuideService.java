@@ -73,7 +73,6 @@ public class TourGuideService {
 	 * @param user the current user
 	 * @return last VisitedLocation
 	 */	
-	//TODO: if User.visitedLocations is not empty, when is this updated ????
 	public VisitedLocation getUserLocation(User user) {
 		VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ?
 				user.getLastVisitedLocation() :
@@ -222,6 +221,28 @@ public class TourGuideService {
 
 	}
 
+	
+	/**
+	 * Return the list of every user's most recent location stored in internalUserMap.
+	 * 
+	 * <p>
+     * Note: if a user's current location history is not empty then it returns the latest position, otherwise gpsUtil  
+     * is used to get a valid position. This behavior is due to the provided function tourGuideService.getUserLocation().
+     * </p>
+     * 
+	 * @return
+	 */
+	public Map<UUID, Location> getAllCurrentLocations() {
+		
+		Map<UUID, Location> mapUserUuidLocation = new HashMap<UUID, Location>();
+		internalUserMap.forEach((id, user) -> {
+ 			mapUserUuidLocation.put(user.getUserId(), getUserLocation(user).location);
+         });
+		
+		return mapUserUuidLocation;
+		
+	}
+	
 
 	private void addShutDownHook() {
 		Runtime.getRuntime().addShutdownHook(new Thread() { 

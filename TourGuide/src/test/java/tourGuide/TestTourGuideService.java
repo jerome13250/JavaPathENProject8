@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 import org.junit.Before;
@@ -39,6 +40,7 @@ public class TestTourGuideService {
 		rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		InternalTestHelper.setInternalUserNumber(0);
 		tourGuideService = new TourGuideService(gpsUtil, rewardsService);
+		//tourGuideService.tracker.stopTracking(); //deactivate Tracker useless for tests
 	}
 	
 	@Test
@@ -138,6 +140,42 @@ public class TestTourGuideService {
 		assertEquals(3.113d, result.getAttractionList().get(0).getDistance(), 0.001d);
 		
 	}
+	
+	@Test
+	public void getAllCurrentLocations() {
+		//ARRANGE:
+		tourGuideService.tracker.stopTracking();
+		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
+		Location location1 = new Location(10, 10);
+		VisitedLocation visitedLocation1 = new VisitedLocation(user.getUserId(), location1, new Date());
+		Location location2 = new Location(20, 20);
+		VisitedLocation visitedLocation2 = new VisitedLocation(user.getUserId(), location2, new Date());
+		user.addToVisitedLocations(visitedLocation1);
+		user.addToVisitedLocations(visitedLocation2);
+		
+		User user2 = new User(UUID.randomUUID(), "jon2", "000", "jon2@tourGuide.com");
+		Location location3 = new Location(30, 30);
+		VisitedLocation visitedLocation3 = new VisitedLocation(user2.getUserId(), location3, new Date());
+		Location location4 = new Location(40, 40);
+		VisitedLocation visitedLocation4 = new VisitedLocation(user2.getUserId(), location4, new Date());
+		user2.addToVisitedLocations(visitedLocation3);
+		user2.addToVisitedLocations(visitedLocation4);
+				
+		tourGuideService.addUser(user);
+		tourGuideService.addUser(user2);
+		
+		//ACT:
+		Map<UUID, Location> result = tourGuideService.getAllCurrentLocations();
+
+		//ASSERT:
+		assertEquals(2,result.size());
+		assertTrue(result.containsKey(user.getUserId()));
+		assertEquals(location2, result.get(user.getUserId()));
+		assertTrue(result.containsKey(user2.getUserId()));
+		assertEquals(location4, result.get(user2.getUserId()));
+		
+	}
+	
 	
 	public void getTripDeals() {
 		
