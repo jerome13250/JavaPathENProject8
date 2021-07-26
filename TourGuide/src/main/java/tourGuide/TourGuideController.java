@@ -34,15 +34,20 @@ public class TourGuideController {
 		return JsonStream.serialize(visitedLocation.location);
     }
     
-    //TODO: create javadoc
- 	//  Return the closest five tourist attractions to the user - no matter how far away they are.
- 	//  Return a new JSON object that contains:
-    	// Name of Tourist attraction, 
-        // Tourist attractions lat/long, 
-        // The user's location lat/long, 
-        // The distance in miles between the user's location and each of the attractions.
-        // The reward points for visiting each Attraction.
-        //    Note: Attraction reward points can be gathered from RewardsCentral
+    /**
+     * Return the closest five tourist attractions to the user - no matter how far away they are, with following informations:
+	 * <ul>
+	 * <li>The user's location lat/long</li>
+	 * <li>Name of Tourist attraction</li>
+	 * <li>Tourist attractions lat/long</li> 
+	 * <li>The distance in miles between the user's location and each of the attractions</li>
+	 * <li>The reward points for visiting each Attraction</li>
+	 * Note: Attraction reward points are gathered from RewardsCentral
+	 * </ul>
+     * 
+     * @param userName the required user name
+     * @return returned object is a DTO, Spring converts it directly to JSON 
+     */
     @RequestMapping("/getNearbyAttractions") 
     public ClosestAttractionsDTO getNearbyAttractions(@RequestParam String userName) {
     	

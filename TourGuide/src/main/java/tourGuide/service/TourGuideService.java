@@ -37,17 +37,15 @@ public class TourGuideService {
 	
 	private Logger logger = LoggerFactory.getLogger(TourGuideService.class);
 	
-	private ObjectMapper mapper;
 	private final GpsUtil gpsUtil;
 	private final RewardsService rewardsService; //protected since need to access in test 
 	private final TripPricer tripPricer = new TripPricer();
 	public final Tracker tracker;
 	boolean testMode = true;
 
-	public TourGuideService(GpsUtil gpsUtil, RewardsService rewardsService, ObjectMapper mapper) {
+	public TourGuideService(GpsUtil gpsUtil, RewardsService rewardsService) {
 		this.gpsUtil = gpsUtil;
 		this.rewardsService = rewardsService;
-		this.mapper = mapper;
 
 		if(testMode) {
 			logger.info("TestMode enabled");
@@ -173,7 +171,7 @@ public class TourGuideService {
 	 * </p>
 	 * 
 	 * @param userName the user name
-	 * @return JSON object
+	 * @return ClosestAttractionsDTO with all required infos
 	 */
 	public ClosestAttractionsDTO getClosest5Attractions (String userName) {
 
@@ -187,7 +185,7 @@ public class TourGuideService {
 		
 		//Get list of Attractions from GpsUtils:
 		List<Attraction> listAttraction = gpsUtil.getAttractions();
-		//this will contain list of attractions + distances:
+		//AttractionDistance will contain attraction + distance: it allows storage of distance calculation result.
 		List<AttractionDistance> listAttractionDistance = new ArrayList<>();
 		//calculate distance and store in a AttractionDistance object:
 		for(Attraction attraction : listAttraction) {
@@ -277,37 +275,7 @@ public class TourGuideService {
 		return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
 	}
 
-	/**
-	 * This inner class is introduced only to facilitate calculation of distances between a user location and attractions.
-	 * It wraps an Attraction object and adds a double distance argument.
-	 * 
-	 * @author jerome
-	 *
-	 */
-	/*
-	private class AttractionDistance {
-
-		Attraction attraction;
-		Double distance;
-
-		AttractionDistance(Attraction attraction, Double distance) {
-			this.attraction = attraction;
-			this.distance = distance;
-
-		}
-		
-		private Attraction getAttraction() {
-			return attraction;
-		}
-		
-		private Double getDistance() {
-			return distance;
-		}
-	}
-	*/
 	
-
-
 }
 
 

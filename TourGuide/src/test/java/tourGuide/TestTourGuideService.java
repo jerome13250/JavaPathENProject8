@@ -7,15 +7,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
@@ -42,9 +37,8 @@ public class TestTourGuideService {
 		Locale.setDefault(Locale.US);
 		GpsUtil gpsUtil = new GpsUtil();
 		rewardsService = new RewardsService(gpsUtil, new RewardCentral());
-		ObjectMapper mapper = new ObjectMapper();
 		InternalTestHelper.setInternalUserNumber(0);
-		tourGuideService = new TourGuideService(gpsUtil, rewardsService, mapper);
+		tourGuideService = new TourGuideService(gpsUtil, rewardsService);
 	}
 	
 	@Test
