@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -39,10 +43,11 @@ public class TourGuideService {
 	private Logger logger = LoggerFactory.getLogger(TourGuideService.class);
 
 	private final GpsUtil gpsUtil;
-	private final RewardsService rewardsService; //protected since need to access in test 
+	private final RewardsService rewardsService; 
 	private final TripPricer tripPricer = new TripPricer();
 	public final Tracker tracker;
 	boolean testMode = true;
+	private final ExecutorService executorService = Executors.newFixedThreadPool(100);
 
 	/**
 	 * Constructor for TourGuideService, this is the default constructor for Spring thanks to @Autowired. In this constructor 
@@ -171,6 +176,37 @@ public class TourGuideService {
 		user.addToVisitedLocations(visitedLocation);
 		rewardsService.calculateRewards(user);
 		return visitedLocation;
+	}
+
+	/**
+	 * Multithreaded call to the GpsUtil to provide a VisitedLocation with random coordinates in WGS84 decimal format to a List of Users.
+	 * For each user the VisitedLocation is saved in User.visitedLocations ArrayList.
+	 * Then rewardsService adds Rewards to each user.
+	 * 
+	 * @param userList, the list of users.
+	 */
+	public void trackUserLocationParallel(List<User> userList) {
+		
+		List<Future> listFuture = new ArrayList<>();
+		for(User u: userList) {
+			Future future = executorService.submit( () -> {
+				VisitedLocation visitedLocation = gpsUtil.getUserLocation(u.getUserId());
+				//logger.info("inside thread, gpsutil visitedLocation={}", visitedLocation);
+				u.addToVisitedLocations(visitedLocation);
+				rewardsService.calculateRewards(u);
+			});
+			listFuture.add(future);
+		}
+		
+		listFuture.stream().forEach(f->{
+			try {
+				f.get();
+			} catch (InterruptedException | ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
+		
 	}
 
 	/**

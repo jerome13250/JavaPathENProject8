@@ -1,5 +1,6 @@
 package tourGuide;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -50,29 +51,32 @@ public class TestPerformance {
 	
 	@Test
 	public void highVolumeTrackLocation() {
-		
+		//ARRANGE:
 		Locale.setDefault(Locale.US); //necessary because of bug in GpsUtil .jar
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
-		InternalTestHelper.setInternalUserNumber(1000);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
-
-		List<User> allUsers = new ArrayList<>();
-		allUsers = tourGuideService.getAllUsers();
+		InternalTestHelper.setInternalUserNumber(100);
+		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
+		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService, true);
+		List<User> allUsers = tourGuideService.getAllUsers();
 		
+		//ACT:
 	    StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
-		for(User user : allUsers) {
-			logger.debug("Test is launching user track ");
-			tourGuideService.trackUserLocation(user);
-		}
 
+		//Multithread:
+		logger.debug("Multithread test is launching user track ");
+		tourGuideService.trackUserLocationParallel(allUsers);
+		
 		stopWatch.stop();
-		tourGuideService.tracker.stopTracking();
+		logger.info("highVolumeTrackLocation: Time Elapsed: {} seconds." , TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime())); 
 
-		System.out.println("highVolumeTrackLocation: Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds."); 
+		//ASSERT:
 		assertTrue(TimeUnit.MINUTES.toSeconds(15) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
+		for(User user : allUsers) {
+			assertEquals(4,user.getVisitedLocations().size());
+		}
 	}
 	
 	@Ignore

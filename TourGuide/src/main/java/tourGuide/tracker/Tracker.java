@@ -67,7 +67,6 @@ public class Tracker extends Thread {
 			stopWatch.start();
 			//loop through all users and launch trackUserLocation, sequential execution 
 			//TODO: create multiple threads instead
-			Integer i = new Integer(1);
 			users.forEach(u -> {
 				logger.debug("Tracker is launching user track ");
 				tourGuideService.trackUserLocation(u);

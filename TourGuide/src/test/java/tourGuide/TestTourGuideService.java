@@ -32,8 +32,8 @@ public class TestTourGuideService {
 	
 	@Before
 	public void setup() {
-		//we have a bug in external jar GpsUtils due to String.format("%.6f", new Object[] { Double.valueOf(longitude) }))
-		//format uses Locale.getDefault() that create string Double with "," (Locale=FR) instead of "."
+		//we have a bug in external jar GpsUtils due to String.format("%.6f", new Object[] { Double.valueOf(longitude) })),
+		//format uses Locale.getDefault() that create string Double with "," (when Locale=FR) instead of "."
 		//For this reason i need to change the default Locale:
 		Locale.setDefault(Locale.US);
 		
@@ -47,46 +47,39 @@ public class TestTourGuideService {
 	
 	@Test
 	public void getUserLocation() {		
-		
+		//ARRANGE:
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
+		//ACT:
 		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
-		//tourGuideService.tracker.stopTracking();
+		//ASSERT:
 		assertTrue(visitedLocation.userId.equals(user.getUserId()));
 	}
 	
 	@Test
 	public void addUser() {
-		
-		
+		//ARRANGE:
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		User user2 = new User(UUID.randomUUID(), "jon2", "000", "jon2@tourGuide.com");
-
+		//ACT:
 		tourGuideService.addUser(user);
 		tourGuideService.addUser(user2);
-		
+		//ASSERT:
 		User retrivedUser = tourGuideService.getUser(user.getUserName());
 		User retrivedUser2 = tourGuideService.getUser(user2.getUserName());
-
-		//tourGuideService.tracker.stopTracking();
-		
 		assertEquals(user, retrivedUser);
 		assertEquals(user2, retrivedUser2);
 	}
 	
 	@Test
 	public void getAllUsers() {
-		
-		
+		//ARRANGE:
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		User user2 = new User(UUID.randomUUID(), "jon2", "000", "jon2@tourGuide.com");
-
 		tourGuideService.addUser(user);
 		tourGuideService.addUser(user2);
-		
+		//ACT:
 		List<User> allUsers = tourGuideService.getAllUsers();
-
-		//tourGuideService.tracker.stopTracking();
-		
+		//ASSERT:
 		assertTrue(allUsers.contains(user));
 		assertTrue(allUsers.contains(user2));
 	}
@@ -96,8 +89,6 @@ public class TestTourGuideService {
 		
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
-		
-		//tourGuideService.tracker.stopTracking();
 		
 		assertEquals(user.getUserId(), visitedLocation.userId);
 	}
