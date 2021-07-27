@@ -18,8 +18,8 @@ import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
-import tourGuide.dto.ClosestAttractionsDTO;
 import tourGuide.helper.InternalTestHelper;
+import tourGuide.model.ClosestAttractionsDTO;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 import tourGuide.user.User;
@@ -36,11 +36,13 @@ public class TestTourGuideService {
 		//format uses Locale.getDefault() that create string Double with "," (Locale=FR) instead of "."
 		//For this reason i need to change the default Locale:
 		Locale.setDefault(Locale.US);
+		
 		GpsUtil gpsUtil = new GpsUtil();
 		rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		InternalTestHelper.setInternalUserNumber(0);
-		tourGuideService = new TourGuideService(gpsUtil, rewardsService);
-		//tourGuideService.tracker.stopTracking(); //deactivate Tracker useless for tests
+		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
+		tourGuideService = new TourGuideService(gpsUtil, rewardsService, true);
+
 	}
 	
 	@Test
@@ -48,7 +50,7 @@ public class TestTourGuideService {
 		
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
-		tourGuideService.tracker.stopTracking();
+		//tourGuideService.tracker.stopTracking();
 		assertTrue(visitedLocation.userId.equals(user.getUserId()));
 	}
 	
@@ -65,7 +67,7 @@ public class TestTourGuideService {
 		User retrivedUser = tourGuideService.getUser(user.getUserName());
 		User retrivedUser2 = tourGuideService.getUser(user2.getUserName());
 
-		tourGuideService.tracker.stopTracking();
+		//tourGuideService.tracker.stopTracking();
 		
 		assertEquals(user, retrivedUser);
 		assertEquals(user2, retrivedUser2);
@@ -83,7 +85,7 @@ public class TestTourGuideService {
 		
 		List<User> allUsers = tourGuideService.getAllUsers();
 
-		tourGuideService.tracker.stopTracking();
+		//tourGuideService.tracker.stopTracking();
 		
 		assertTrue(allUsers.contains(user));
 		assertTrue(allUsers.contains(user2));
@@ -95,31 +97,14 @@ public class TestTourGuideService {
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
 		
-		tourGuideService.tracker.stopTracking();
+		//tourGuideService.tracker.stopTracking();
 		
 		assertEquals(user.getUserId(), visitedLocation.userId);
 	}
 	
-	@Ignore // Not yet implemented
 	@Test
 	public void getNearbyAttractions() {
-		
-		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
-		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
-		
-		List<Attraction> attractions = tourGuideService.getNearByAttractions(visitedLocation);
-		
-		tourGuideService.tracker.stopTracking();
-		
-		assertEquals(5, attractions.size());
-	}
-	
-	
-	@Test
-	public void getClosest5Attractions() {
 		//ARRANGE:
-		tourGuideService.tracker.stopTracking();
-		
 		String userName = "jon";
 		User user = new User(UUID.randomUUID(), userName, "000", "jon@tourGuide.com");
 		
@@ -130,7 +115,7 @@ public class TestTourGuideService {
 		tourGuideService.addUser(user);
 		
 		//ACT:
-		ClosestAttractionsDTO result = tourGuideService.getClosest5Attractions(userName);
+		ClosestAttractionsDTO result = tourGuideService.getNearbyAttractions(userName);
 		
 		//ASSERT:
 		assertEquals(40.782223d, result.getUserLocation().latitude, 0.000001);
@@ -144,7 +129,6 @@ public class TestTourGuideService {
 	@Test
 	public void getAllCurrentLocations() {
 		//ARRANGE:
-		tourGuideService.tracker.stopTracking();
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		Location location1 = new Location(10, 10);
 		VisitedLocation visitedLocation1 = new VisitedLocation(user.getUserId(), location1, new Date());
@@ -183,7 +167,6 @@ public class TestTourGuideService {
 
 		List<Provider> providers = tourGuideService.getTripDeals(user);
 		
-		tourGuideService.tracker.stopTracking();
 		
 		assertEquals(10, providers.size());
 	}

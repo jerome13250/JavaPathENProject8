@@ -11,6 +11,8 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
@@ -22,6 +24,9 @@ import tourGuide.service.TourGuideService;
 import tourGuide.user.User;
 
 public class TestPerformance {
+	
+	private Logger logger = LoggerFactory.getLogger(TestPerformance.class);
+	
 	
 	/*
 	 * A note on performance improvements:
@@ -46,11 +51,11 @@ public class TestPerformance {
 	@Test
 	public void highVolumeTrackLocation() {
 		
-		Locale.setDefault(Locale.US);
+		Locale.setDefault(Locale.US); //necessary because of bug in GpsUtil .jar
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
-		InternalTestHelper.setInternalUserNumber(200);
+		InternalTestHelper.setInternalUserNumber(1000);
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
 
 		List<User> allUsers = new ArrayList<>();
@@ -59,8 +64,10 @@ public class TestPerformance {
 	    StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 		for(User user : allUsers) {
+			logger.debug("Test is launching user track ");
 			tourGuideService.trackUserLocation(user);
 		}
+
 		stopWatch.stop();
 		tourGuideService.tracker.stopTracking();
 

@@ -15,6 +15,7 @@ import java.util.stream.IntStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,9 +24,9 @@ import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
-import tourGuide.dto.AttractionDistance;
-import tourGuide.dto.ClosestAttractionsDTO;
 import tourGuide.helper.InternalTestHelper;
+import tourGuide.model.AttractionDistance;
+import tourGuide.model.ClosestAttractionsDTO;
 import tourGuide.tracker.Tracker;
 import tourGuide.user.User;
 import tourGuide.user.UserReward;
@@ -34,15 +35,23 @@ import tripPricer.TripPricer;
 
 @Service
 public class TourGuideService {
-	
+
 	private Logger logger = LoggerFactory.getLogger(TourGuideService.class);
-	
+
 	private final GpsUtil gpsUtil;
 	private final RewardsService rewardsService; //protected since need to access in test 
 	private final TripPricer tripPricer = new TripPricer();
 	public final Tracker tracker;
 	boolean testMode = true;
 
+	/**
+	 * Constructor for TourGuideService, this is the default constructor for Spring thanks to @Autowired. In this constructor 
+	 * the Tracker Thread is active by default.
+	 * 
+	 * @param gpsUtil the reference to bean GpsUtil.jar
+	 * @param rewardsService the reference to bean RewardsService.jar
+	 */
+	@Autowired //this defines the default constructor for Spring
 	public TourGuideService(GpsUtil gpsUtil, RewardsService rewardsService) {
 		this.gpsUtil = gpsUtil;
 		this.rewardsService = rewardsService;
@@ -53,7 +62,31 @@ public class TourGuideService {
 			initializeInternalUsers();
 			logger.debug("Finished initializing users");
 		}
-		tracker = new Tracker(this);
+		
+		tracker = new Tracker(this, false); //by default Tracker is not stopped
+		addShutDownHook();
+	}
+	
+	/**
+	 * Constructor for TourGuideService, this version has a boolean stopTrackerAtStartup that allows Tracker to be directly stopped,
+	 * this is for test purpose as Tracker conflicts with tests by running permanent updates on users.
+	 * 
+	 * @param gpsUtil the reference to bean GpsUtil.jar
+	 * @param rewardsService the reference to bean RewardsService.jar
+	 * @param stopTrackerAtStartup  boolean that allows Tracker to be directly stopped when true, this is for test only.
+	 */
+	public TourGuideService(GpsUtil gpsUtil, RewardsService rewardsService, boolean stopTrackerAtStartup) {
+		this.gpsUtil = gpsUtil;
+		this.rewardsService = rewardsService;
+
+		if(testMode) {
+			logger.info("TestMode enabled");
+			logger.debug("Initializing users");
+			initializeInternalUsers();
+			logger.debug("Finished initializing users");
+		}
+		
+		tracker = new Tracker(this, stopTrackerAtStartup); //Tracker can be stopped at startup
 		addShutDownHook();
 	}
 
@@ -141,21 +174,6 @@ public class TourGuideService {
 	}
 
 	/**
-	 * Return a list of all Attractions for the required VisitedLocation where distance is inferior to 200 miles.
-	 * @param visitedLocation required
-	 * @return List of Attractions distance less than 200 miles
-	 */
-	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
-		List<Attraction> nearbyAttractions = new ArrayList<>();
-		for(Attraction attraction : gpsUtil.getAttractions()) {
-			if(rewardsService.isWithinAttractionProximity(attraction, visitedLocation.location)) {
-				nearbyAttractions.add(attraction);
-			}
-		}
-		return nearbyAttractions;
-	}
-
-	/**
 	 * Get the closest five tourist attractions to the user - no matter how far away they are.
 	 * <p>
 	 * Return a DTO object that contains following informations:
@@ -172,16 +190,16 @@ public class TourGuideService {
 	 * @param userName the user name
 	 * @return ClosestAttractionsDTO with all required infos
 	 */
-	public ClosestAttractionsDTO getClosest5Attractions (String userName) {
+	public ClosestAttractionsDTO getNearbyAttractions (String userName) {
 
 		//This DTO will contain the required data:
 		ClosestAttractionsDTO closestAttractionsDTO = new ClosestAttractionsDTO();
-		
+
 		//get user:
 		User user = getUser(userName);
 		VisitedLocation visitedLocation = user.getLastVisitedLocation();
 		closestAttractionsDTO.setUserLocation(visitedLocation.location);
-		
+
 		//Get list of Attractions from GpsUtils:
 		List<Attraction> listAttraction = gpsUtil.getAttractions();
 		//AttractionDistance will contain attraction + distance: it allows storage of distance calculation result.
@@ -197,13 +215,13 @@ public class TourGuideService {
 							)
 					);
 		}
-		
+
 		//this Stream sorts our list and limit it to 5 lowest distance
 		List<AttractionDistance> listClosest5AttractionsDistances = listAttractionDistance
-			.stream()
-			.sorted(Comparator.comparingDouble(AttractionDistance::getDistance))
-			.limit(5)
-            .collect(Collectors.toList());
+				.stream()
+				.sorted(Comparator.comparingDouble(AttractionDistance::getDistance))
+				.limit(5)
+				.collect(Collectors.toList());
 
 		//set rewardspoints on each attraction:
 		List<UserReward> userRewards = user.getUserRewards();
@@ -213,7 +231,7 @@ public class TourGuideService {
 					a.setRewardPoints(u.getRewardPoints());
 			}
 		});
-		
+
 		//add attractions to dto:
 		closestAttractionsDTO.setAttractionList(listClosest5AttractionsDistances);
 
@@ -221,32 +239,33 @@ public class TourGuideService {
 
 	}
 
-	
+
 	/**
 	 * Return the list of every user's most recent location stored in internalUserMap.
 	 * 
 	 * <p>
-     * Note: if a user's current location history is not empty then it returns the latest position, otherwise gpsUtil  
-     * is used to get a valid position. This behavior is due to the provided function tourGuideService.getUserLocation().
-     * </p>
-     * 
+	 * Note: if a user's current location history is not empty then it returns the latest position, otherwise gpsUtil  
+	 * is used to get a valid position. This behavior is due to the provided function tourGuideService.getUserLocation().
+	 * </p>
+	 * 
 	 * @return
 	 */
 	public Map<UUID, Location> getAllCurrentLocations() {
-		
+
 		Map<UUID, Location> mapUserUuidLocation = new HashMap<UUID, Location>();
 		internalUserMap.forEach((id, user) -> {
- 			mapUserUuidLocation.put(user.getUserId(), getUserLocation(user).location);
-         });
-		
-		return mapUserUuidLocation;
-		
-	}
-	
+			mapUserUuidLocation.put(user.getUserId(), getUserLocation(user).location);
+		});
 
+		return mapUserUuidLocation;
+
+	}
+
+	//TODO: A INVESTIGUER
 	private void addShutDownHook() {
 		Runtime.getRuntime().addShutdownHook(new Thread() { 
 			public void run() {
+				logger.debug("TourGuideService ShutDownHook invoked");
 				tracker.stopTracking();
 			} 
 		}); 
@@ -296,7 +315,7 @@ public class TourGuideService {
 		return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
 	}
 
-	
+
 }
 
 

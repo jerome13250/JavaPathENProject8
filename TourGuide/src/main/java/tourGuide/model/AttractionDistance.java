@@ -1,4 +1,4 @@
-package tourGuide.dto;
+package tourGuide.model;
 
 import gpsUtil.location.Attraction;
 

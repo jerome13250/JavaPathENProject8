@@ -27,18 +27,28 @@ public class Tracker extends Thread {
 
 	/**
 	 * Constructor for Tracker, submits itself to ExecutorService to get executed as a Thread.
-	 * @param tourGuideService
+	 * 
+	 * @param tourGuideService that requires to create the Tracker.
+	 * @param stop boolean used to disable Tracker at creation, this allows to make 
+	 * tests without tracker thread running.
 	 */
-	public Tracker(TourGuideService tourGuideService) {
+	public Tracker(TourGuideService tourGuideService, boolean stopTrackerAtStartup) {
 		this.tourGuideService = tourGuideService;
 		
-		executorService.submit(this);
+		if (stopTrackerAtStartup) {
+			this.stop = true;
+			executorService.shutdownNow();
+		}
+		else {	
+			executorService.submit(this);
+		}
 	}
 	
 	/**
 	 * Assures to shut down the Tracker thread
 	 */
 	public void stopTracking() {
+		logger.debug("Tracker is required to stop in function Tracker.stopTracking()");
 		stop = true;
 		executorService.shutdownNow();
 	}
@@ -57,7 +67,11 @@ public class Tracker extends Thread {
 			stopWatch.start();
 			//loop through all users and launch trackUserLocation, sequential execution 
 			//TODO: create multiple threads instead
-			users.forEach(u -> tourGuideService.trackUserLocation(u));
+			Integer i = new Integer(1);
+			users.forEach(u -> {
+				logger.debug("Tracker is launching user track ");
+				tourGuideService.trackUserLocation(u);
+				});
 			stopWatch.stop();
 			logger.debug("Tracker Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds."); 
 			stopWatch.reset();
