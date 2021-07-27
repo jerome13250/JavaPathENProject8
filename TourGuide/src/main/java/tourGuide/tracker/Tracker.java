@@ -65,12 +65,20 @@ public class Tracker extends Thread {
 			List<User> users = tourGuideService.getAllUsers();
 			logger.debug("Begin Tracker. Tracking " + users.size() + " users.");
 			stopWatch.start();
+			
 			//loop through all users and launch trackUserLocation, sequential execution 
-			//TODO: create multiple threads instead
+			//old monothread:
+			/*
 			users.forEach(u -> {
 				logger.debug("Tracker is launching user track ");
 				tourGuideService.trackUserLocation(u);
 				});
+			*/
+			
+			//multithread:
+			tourGuideService.trackUserLocationMultiThread(users);
+			
+			
 			stopWatch.stop();
 			logger.debug("Tracker Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds."); 
 			stopWatch.reset();

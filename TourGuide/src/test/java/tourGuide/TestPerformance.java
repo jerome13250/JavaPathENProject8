@@ -49,6 +49,7 @@ public class TestPerformance {
 	 *          assertTrue(TimeUnit.MINUTES.toSeconds(20) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
 	 */
 	
+
 	@Test
 	public void highVolumeTrackLocation() {
 		//ARRANGE:
@@ -64,11 +65,9 @@ public class TestPerformance {
 		//ACT:
 	    StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
-
 		//Multithread:
 		logger.debug("Multithread test is launching user track ");
-		tourGuideService.trackUserLocationParallel(allUsers);
-		
+		tourGuideService.trackUserLocationMultiThread(allUsers);
 		stopWatch.stop();
 		logger.info("highVolumeTrackLocation: Time Elapsed: {} seconds." , TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime())); 
 
@@ -79,32 +78,38 @@ public class TestPerformance {
 		}
 	}
 	
-	@Ignore
+	
 	@Test
 	public void highVolumeGetRewards() {
+		//ARRANGE:
+		Locale.setDefault(Locale.US); //necessary because of bug in GpsUtil .jar
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
-
 		// Users should be incremented up to 100,000, and test finishes within 20 minutes
 		InternalTestHelper.setInternalUserNumber(100);
+		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
+		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService, true);
+		//Add the first attraction in GpsUtils internal list to all users:
+		Attraction attraction = gpsUtil.getAttractions().get(0);
+		List<User> allUsers = tourGuideService.getAllUsers();
+		allUsers.forEach(u -> u.addToVisitedLocations(new VisitedLocation(u.getUserId(), attraction, new Date())));
+		
+		//ACT:
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
+		//monothread:
+	    //allUsers.forEach(u -> rewardsService.calculateRewards(u));
 		
-	    Attraction attraction = gpsUtil.getAttractions().get(0);
-		List<User> allUsers = new ArrayList<>();
-		allUsers = tourGuideService.getAllUsers();
-		allUsers.forEach(u -> u.addToVisitedLocations(new VisitedLocation(u.getUserId(), attraction, new Date())));
-	     
-	    allUsers.forEach(u -> rewardsService.calculateRewards(u));
-	    
+		//multithread:
+		rewardsService.calculateRewardsMultiThread(allUsers);
+		
+		stopWatch.stop();
+		logger.info("highVolumeGetRewards: Time Elapsed: {} seconds.", TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime())); 
+		
+	    //ASSERT:
 		for(User user : allUsers) {
 			assertTrue(user.getUserRewards().size() > 0);
 		}
-		stopWatch.stop();
-		tourGuideService.tracker.stopTracking();
-
-		System.out.println("highVolumeGetRewards: Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds."); 
 		assertTrue(TimeUnit.MINUTES.toSeconds(20) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
 	}
 	

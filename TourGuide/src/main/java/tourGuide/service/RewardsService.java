@@ -1,6 +1,11 @@
 package tourGuide.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +23,7 @@ import tourGuide.user.UserReward;
 public class RewardsService {
 	
 	private Logger logger = LoggerFactory.getLogger(RewardsService.class);
-	
+		
     private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
 
 	// proximity in miles
@@ -27,6 +32,8 @@ public class RewardsService {
 	private int attractionProximityRange = 200;
 	private final GpsUtil gpsUtil;
 	private final RewardCentral rewardsCentral;
+	
+	private final ExecutorService executorService = Executors.newFixedThreadPool(500);
 	
 	public RewardsService(GpsUtil gpsUtil, RewardCentral rewardCentral) {
 		this.gpsUtil = gpsUtil;
@@ -49,9 +56,12 @@ public class RewardsService {
 	 * @param user
 	 */
 	public void calculateRewards(User user) {
-		List<VisitedLocation> userLocations = user.getVisitedLocations();
+		 
+		List<VisitedLocation> userLocations = user.getVisitedLocations(); 
 		List<Attraction> attractions = gpsUtil.getAttractions();
 		
+		//TODO: this is stupid, rewards should be calculated on the last Location only. 
+		//Otherwise the more we have history the more we'll have to calculate distances.
 		for(VisitedLocation visitedLocation : userLocations) {
 			for(Attraction attraction : attractions) {
 				if(user.getUserRewards().stream().filter(r -> r.attraction.attractionName.equals(attraction.attractionName)).count() == 0) {
@@ -64,6 +74,40 @@ public class RewardsService {
 		}
 	}
 	
+	
+	public void calculateRewardsMultiThread(List<User> userList) {
+
+		List<Attraction> attractions = gpsUtil.getAttractions();
+		List<Future> listFuture = new ArrayList<>();
+
+		for(User user : userList) {
+			Future future = executorService.submit( () -> {
+
+				for(Attraction attraction : attractions) {
+					if(user.getUserRewards().stream().filter(r -> r.attraction.attractionName.equals(attraction.attractionName)).count() == 0) {
+						//rewards are calculated on the last Location only:
+						VisitedLocation lastVisitedLocation = user.getVisitedLocations().get(user.getVisitedLocations().size()-1);
+						if(nearAttraction(lastVisitedLocation, attraction)) {
+							user.addUserReward(new UserReward(lastVisitedLocation, attraction, getRewardPoints(attraction, user)));
+							//logger.debug("user has rewards : {}", user.getUserName());
+						}
+					}
+				}
+			});
+			listFuture.add(future);
+		}
+		
+		listFuture.stream().forEach(f->{
+			try {
+				f.get();
+			} catch (InterruptedException | ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
+		
+	}
+		
 	/**
 	 * Test if distance between attraction and location is inferior to attractionProximityRange (200 miles).
 	 * @param attraction required
