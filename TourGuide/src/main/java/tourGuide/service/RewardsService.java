@@ -33,7 +33,8 @@ public class RewardsService {
 	private final GpsUtil gpsUtil;
 	private final RewardCentral rewardsCentral;
 	
-	private final ExecutorService executorService = Executors.newFixedThreadPool(500);
+	//After tests, CachedThreadPool is the fastest.
+	private final ExecutorService executorService = Executors.newCachedThreadPool();
 	
 	public RewardsService(GpsUtil gpsUtil, RewardCentral rewardCentral) {
 		this.gpsUtil = gpsUtil;

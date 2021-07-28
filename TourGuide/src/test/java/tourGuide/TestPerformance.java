@@ -57,7 +57,7 @@ public class TestPerformance {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
-		InternalTestHelper.setInternalUserNumber(100);
+		InternalTestHelper.setInternalUserNumber(100000);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService, true);
 		List<User> allUsers = tourGuideService.getAllUsers();
@@ -86,7 +86,7 @@ public class TestPerformance {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		// Users should be incremented up to 100,000, and test finishes within 20 minutes
-		InternalTestHelper.setInternalUserNumber(100);
+		InternalTestHelper.setInternalUserNumber(100000);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService, true);
 		//Add the first attraction in GpsUtils internal list to all users:
@@ -97,12 +97,8 @@ public class TestPerformance {
 		//ACT:
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
-		//monothread:
-	    //allUsers.forEach(u -> rewardsService.calculateRewards(u));
-		
 		//multithread:
 		rewardsService.calculateRewardsMultiThread(allUsers);
-		
 		stopWatch.stop();
 		logger.info("highVolumeGetRewards: Time Elapsed: {} seconds.", TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime())); 
 		
