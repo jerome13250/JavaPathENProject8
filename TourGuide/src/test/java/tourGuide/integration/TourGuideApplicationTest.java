@@ -1,4 +1,4 @@
-package tourGuide;
+package tourGuide.integration;
 
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;

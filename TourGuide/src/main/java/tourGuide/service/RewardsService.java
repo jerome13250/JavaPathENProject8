@@ -56,6 +56,7 @@ public class RewardsService {
 	 * 
 	 * @param user
 	 */
+	@Deprecated
 	public void calculateRewards(User user) {
 		 
 		List<VisitedLocation> userLocations = user.getVisitedLocations(); 
@@ -75,7 +76,13 @@ public class RewardsService {
 		}
 	}
 	
-	
+	/**
+	 * This function gets the last VisitedLocation for a list of users, then gets all Attractions provided by GpsUtils.
+	 * It checks for each user last visited location that if it has no previous UserReward on specific attraction
+	 * and if the attraction is close enough ( function nearAttraction ) we add a Reward to the user.
+	 * 
+	 * @param user
+	 */
 	public void calculateRewardsMultiThread(List<User> userList) {
 
 		List<Attraction> attractions = gpsUtil.getAttractions();
@@ -85,7 +92,8 @@ public class RewardsService {
 			Future future = executorService.submit( () -> {
 
 				for(Attraction attraction : attractions) {
-					if(user.getUserRewards().stream().filter(r -> r.attraction.attractionName.equals(attraction.attractionName)).count() == 0) {
+					//this condition is needed to avoid useless call to reward calculation that won't be stored...
+					if(user.getUserRewards().stream().noneMatch(r -> r.attraction.attractionName.equals(attraction.attractionName))) {
 						//rewards are calculated on the last Location only:
 						VisitedLocation lastVisitedLocation = user.getVisitedLocations().get(user.getVisitedLocations().size()-1);
 						if(nearAttraction(lastVisitedLocation, attraction)) {

@@ -69,13 +69,19 @@ public class User {
 		visitedLocations.clear();
 	}
 	
-	//TODO: the condition is always false, delete ?
 	/**
-	 * The condition is absurd
+	 * Add a Reward to a User only if the user has not already a reward on the same attraction.
 	 * @param userReward
 	 */
 	public void addUserReward(UserReward userReward) {
-		if(userRewards.stream().filter(r -> !r.attraction.attractionName.equals(userReward.attraction)).count() == 0) {
+
+		//if attraction name is not already in rewards list then add a reward
+		if(userRewards
+				.stream()
+				.noneMatch(r -> r.attraction.attractionName.equals(userReward.attraction))
+				)
+
+		{
 			userRewards.add(userReward);
 		}
 	}

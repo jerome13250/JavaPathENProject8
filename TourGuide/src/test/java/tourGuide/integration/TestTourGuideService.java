@@ -1,8 +1,9 @@
-package tourGuide;
+package tourGuide.integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -102,8 +103,8 @@ public class TestTourGuideService {
 		Location centralParkNY = new Location(40.782223, -73.965279); //central park New York
 		VisitedLocation fakeVisitedLocation = new VisitedLocation(user.getUserId(), centralParkNY, new Date());
 		user.addToVisitedLocations(fakeVisitedLocation);
-		rewardsService.calculateRewards(user);
 		tourGuideService.addUser(user);
+		rewardsService.calculateRewardsMultiThread(tourGuideService.getAllUsers());
 		
 		//ACT:
 		ClosestAttractionsDTO result = tourGuideService.getNearbyAttractions(userName);
