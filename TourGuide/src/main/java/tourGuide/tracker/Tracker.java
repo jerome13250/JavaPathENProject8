@@ -9,8 +9,8 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tourGuide.model.user.User;
 import tourGuide.service.TourGuideService;
-import tourGuide.user.User;
 
 /**
  * Tracker class extends Thread, when this class is created it first creates an ExecutorService then in its constructor 

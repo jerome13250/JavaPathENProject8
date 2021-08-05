@@ -33,9 +33,9 @@ import tourGuide.model.AttractionDistance;
 import tourGuide.model.ClosestAttractionsDTO;
 import tourGuide.model.ProviderDTO;
 import tourGuide.model.TripDealsDTO;
+import tourGuide.model.user.User;
+import tourGuide.model.user.UserReward;
 import tourGuide.tracker.Tracker;
-import tourGuide.user.User;
-import tourGuide.user.UserReward;
 import tripPricer.Provider;
 import tripPricer.TripPricer;
 

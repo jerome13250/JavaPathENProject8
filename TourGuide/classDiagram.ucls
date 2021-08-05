@@ -10,7 +10,7 @@
       <operations public="true" package="false" protected="false" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="tourGuide.ctourGuide.config.TourGuideModuleoject="TourGuide" 
+  <class id="2" language="java" name="tourGuide.config.TourGuideModule" project="TourGuide" 
     file="/TourGuide/src/main/java/tourGuide/config/TourGuideModule.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="133" y="308"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -46,8 +46,8 @@
       <operations public="true" package="false" protected="false" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="6" language="java" name="tourGuide.user.User" project="TourGuide" 
-    file="/TourGuide/src/main/java/tourGuide/user/User.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="6" language="java" name="tourGuide.model.user.User" project="TourGuide" 
+    file="/TourGuide/src/main/java/tourGuide/model/user/User.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1133" y="205"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -55,8 +55,8 @@
       <operations public="true" package="false" protected="false" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="7" language="java" name="tourGuide.user.UserPreferences" project="TourGuide" 
-    file="/TourGuide/src/main/java/tourGuide/user/UserPreferences.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="7" language="java" name="tourGuide.model.user.UserPreferences" project="TourGuide" 
+    file="/TourGuide/src/main/java/tourGuide/model/user/UserPreferences.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1172" y="601"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -64,8 +64,8 @@
       <operations public="true" package="false" protected="false" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="8" language="java" name="tourGuide.user.UserReward" project="TourGuide" 
-    file="/TourGuide/src/main/java/tourGuide/user/UserReward.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="8" language="java" name="tourGuide.model.user.UserReward" project="TourGuide" 
+    file="/TourGuide/src/main/java/tourGuide/model/user/UserReward.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1428" y="94"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
