@@ -1,4 +1,4 @@
-package tourGuide;
+package tourGuide.controller;
 
 import java.util.List;
 
@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jsoniter.output.JsonStream;
 
 import gpsUtil.location.VisitedLocation;
+import tourGuide.model.TripDealsDTO;
 import tourGuide.service.TourGuideService;
 import tourGuide.user.User;
 import tripPricer.Provider;
@@ -79,9 +80,9 @@ public class TourGuideController {
     }
     
     @RequestMapping("/getTripDeals")
-    public String getTripDeals(@RequestParam String userName) {
-    	List<Provider> providers = tourGuideService.getTripDeals(getUser(userName));
-    	return JsonStream.serialize(providers);
+    public TripDealsDTO getTripDeals(@RequestParam String userName) {
+    	TripDealsDTO tripDealsDTO = tourGuideService.getTripDeals(getUser(userName));
+    	return tripDealsDTO;
     }
     
     private User getUser(String userName) {

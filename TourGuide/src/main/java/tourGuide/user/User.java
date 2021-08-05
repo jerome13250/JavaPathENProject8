@@ -76,12 +76,7 @@ public class User {
 	public void addUserReward(UserReward userReward) {
 
 		//if attraction name is not already in rewards list then add a reward
-		if(userRewards
-				.stream()
-				.noneMatch(r -> r.attraction.attractionName.equals(userReward.attraction))
-				)
-
-		{
+		if(userRewards.stream().noneMatch(r -> r.attraction.attractionName.equals(userReward.attraction))) {
 			userRewards.add(userReward);
 		}
 	}

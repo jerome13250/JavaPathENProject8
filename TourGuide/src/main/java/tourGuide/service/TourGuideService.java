@@ -31,6 +31,8 @@ import gpsUtil.location.VisitedLocation;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.model.AttractionDistance;
 import tourGuide.model.ClosestAttractionsDTO;
+import tourGuide.model.ProviderDTO;
+import tourGuide.model.TripDealsDTO;
 import tourGuide.tracker.Tracker;
 import tourGuide.user.User;
 import tourGuide.user.UserReward;
@@ -155,12 +157,23 @@ public class TourGuideService {
 	 * @return the list of providers
 	 */
 	//TODO: inconsistency in original project, tripPricer.getPrice uses user.getUserId() instead of UUID attractionId 
-	public List<Provider> getTripDeals(User user) {
+	public TripDealsDTO getTripDeals(User user) {
 		int cumulatativeRewardPoints = user.getUserRewards().stream().mapToInt(i -> i.getRewardPoints()).sum();
 		List<Provider> providers = tripPricer.getPrice(tripPricerApiKey, user.getUserId(), user.getUserPreferences().getNumberOfAdults(), 
 				user.getUserPreferences().getNumberOfChildren(), user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);
 		user.setTripDeals(providers);
-		return providers;
+		
+		
+		//TODO: pas sur que ce soit utile...
+		List<ProviderDTO> providersDTO = providers.stream().map(p-> new ProviderDTO(p)).collect(Collectors.toList());
+		return new TripDealsDTO(
+				user.getUserPreferences().getNumberOfAdults(), 
+				user.getUserPreferences().getNumberOfChildren(),
+				user.getUserPreferences().getTripDuration(),
+				cumulatativeRewardPoints,
+				providersDTO
+				);
+		
 	}
 
 	/**
@@ -327,6 +340,11 @@ public class TourGuideService {
 			String phone = "000";
 			String email = userName + "@tourGuide.com";
 			User user = new User(UUID.randomUUID(), userName, phone, email);
+			
+			//temp:
+			user.getUserPreferences().setNumberOfChildren(5);
+			
+			
 			generateUserLocationHistory(user);
 
 			internalUserMap.put(userName, user);

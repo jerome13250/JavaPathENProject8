@@ -21,6 +21,7 @@ import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.model.ClosestAttractionsDTO;
+import tourGuide.model.TripDealsDTO;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 import tourGuide.user.User;
@@ -157,10 +158,12 @@ public class TestTourGuideService {
 		
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 
-		List<Provider> providers = tourGuideService.getTripDeals(user);
+		//List<Provider> providers = tourGuideService.getTripDeals(user);
+		
+		TripDealsDTO tripDealsDTO = tourGuideService.getTripDeals(user);
 		
 		
-		assertEquals(10, providers.size());
+		assertEquals(10, tripDealsDTO.getTripDeals().size());
 	}
 	
 	
