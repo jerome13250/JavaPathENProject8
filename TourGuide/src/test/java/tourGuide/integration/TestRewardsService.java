@@ -1,7 +1,7 @@
 package tourGuide.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
@@ -29,7 +29,7 @@ public class TestRewardsService {
 	RewardsService rewardsService;
 	GpsUtil gpsUtil;
 	
-	@Before
+	@BeforeEach
 	public void setup() {
 		//we have a bug in external jar GpsUtils due to String.format("%.6f", new Object[] { Double.valueOf(longitude) })),
 		//format uses Locale.getDefault() that create string Double with "," (when Locale=FR) instead of "."

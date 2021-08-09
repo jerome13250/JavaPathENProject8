@@ -1,18 +1,12 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.1.6.RELEASE")
-    }
+/*
+Allows us to declare the Gradle build's dependencies, such as third-party plugins and task classes.
+*/
+plugins {
+	id 'org.springframework.boot' version '2.5.3'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+	id 'jacoco'
 }
-
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
-apply plugin: "jacoco"
 
 
 bootJar {
@@ -20,29 +14,40 @@ bootJar {
     version =  '1.0.0'
 }
 
+
 repositories {
-    mavenCentral()
+    mavenCentral()  //referencing the Maven repository
     flatDir {
-        dirs 'libs'
+        dirs 'libs'  //defines directory(s) that contain a set of files that can be used to resolve dependencies.
     }
 }
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web")
-    compile("org.springframework.boot:spring-boot-starter-actuator")
-    compile group: 'org.javamoney', name: 'moneta', version: '1.3'
-	compile group: 'com.jsoniter', name: 'jsoniter', version: '0.9.23'
-	
-    compile(name:'gpsUtil', ext:'jar')
-    compile(name:'RewardCentral', ext:'jar')
-    compile(name:'TripPricer', ext:'jar')
-    
-    testCompile("junit:junit")
-    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.1.6.RELEASE'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
 }
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	
+	implementation (name:'gpsUtil', ext:'jar')
+    implementation (name:'RewardCentral', ext:'jar')
+    implementation (name:'TripPricer', ext:'jar')
+    implementation group: 'org.javamoney', name: 'moneta', version: '1.3'
+    implementation group: 'com.jsoniter', name: 'jsoniter', version: '0.9.23'
+    
+    compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	
+}
+
 
 
 jacoco {

@@ -1,21 +1,18 @@
 package tourGuide.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import gpsUtil.GpsUtil;
-import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
@@ -25,14 +22,13 @@ import tourGuide.model.TripDealsDTO;
 import tourGuide.model.user.User;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
-import tripPricer.Provider;
 
-public class TestTourGuideService {
+class TestTourGuideService {
 
 	TourGuideService tourGuideService;
 	RewardsService rewardsService;
 	
-	@Before
+	@BeforeEach
 	public void setup() {
 		//we have a bug in external jar GpsUtils due to String.format("%.6f", new Object[] { Double.valueOf(longitude) })),
 		//format uses Locale.getDefault() that create string Double with "," (when Locale=FR) instead of "."
@@ -48,17 +44,17 @@ public class TestTourGuideService {
 	}
 	
 	@Test
-	public void getUserLocation() {		
+	void getUserLocation() {		
 		//ARRANGE:
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		//ACT:
 		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
 		//ASSERT:
-		assertTrue(visitedLocation.userId.equals(user.getUserId()));
+		assertEquals(visitedLocation.userId,user.getUserId());
 	}
 	
 	@Test
-	public void addUser() {
+	void addUser() {
 		//ARRANGE:
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		User user2 = new User(UUID.randomUUID(), "jon2", "000", "jon2@tourGuide.com");
@@ -73,7 +69,7 @@ public class TestTourGuideService {
 	}
 	
 	@Test
-	public void getAllUsers() {
+	void getAllUsers() {
 		//ARRANGE:
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		User user2 = new User(UUID.randomUUID(), "jon2", "000", "jon2@tourGuide.com");
@@ -87,7 +83,7 @@ public class TestTourGuideService {
 	}
 	
 	@Test
-	public void trackUser() {
+	void trackUser() {
 		
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
@@ -96,7 +92,7 @@ public class TestTourGuideService {
 	}
 	
 	@Test
-	public void getNearbyAttractions() {
+	void getNearbyAttractions() {
 		//ARRANGE:
 		String userName = "jon";
 		User user = new User(UUID.randomUUID(), userName, "000", "jon@tourGuide.com");
@@ -120,7 +116,7 @@ public class TestTourGuideService {
 	}
 	
 	@Test
-	public void getAllCurrentLocations() {
+	void getAllCurrentLocations() {
 		//ARRANGE:
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		Location location1 = new Location(10, 10);
