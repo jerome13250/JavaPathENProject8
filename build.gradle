@@ -1,0 +1,77 @@
+/**************************************************************************************************************
+ * This top-level build.gradle file configures build behavior that is shared between all sub-modules
+ * so that we don’t have to duplicate things.
+***************************************************************************************************************/
+
+/*
+Note that we cannot use the new "plugins {...}" syntax inside a "allprojects {...}" or "subprojects {...}" closure.
+But starting with Gradle 3.0 we no longer have to deal with all the buildscript { } nonsense to get the plugin on our classpath.
+https://stackoverflow.com/questions/26236308/how-to-apply-plugin-to-allprojects-with-new-gradle-plugins-mechanism
+*/
+//need to declare special versioned plugins outside of subproject closure:
+plugins {
+    id 'org.springframework.boot' version '2.5.3' apply false
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+}
+
+subprojects {
+	//we are forced to use "apply plugin" since the plugins{} closure does not work inside "subprojects":
+	apply plugin: 'org.springframework.boot'
+	apply plugin: 'io.spring.dependency-management'
+	apply plugin: 'java'
+	apply plugin: 'jacoco'
+	
+	repositories {
+	    mavenCentral()  //referencing the Maven repository
+	}
+	
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
+	
+	
+	configurations {
+		compileOnly {
+			extendsFrom annotationProcessor
+		}
+	}
+	
+	dependencies {
+		implementation 'org.springframework.boot:spring-boot-starter-actuator'
+		implementation 'org.springframework.boot:spring-boot-starter-web'
+		
+	    implementation group: 'org.javamoney', name: 'moneta', version: '1.3'
+	    implementation group: 'com.jsoniter', name: 'jsoniter', version: '0.9.23'
+	    
+	    compileOnly 'org.projectlombok:lombok'
+		annotationProcessor 'org.projectlombok:lombok'
+		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+		
+	}
+	
+	jacoco {
+	    toolVersion = "0.8.4"
+	}
+	
+	jacocoTestReport {
+	    reports {
+	        xml.enabled true
+	        csv.enabled false
+	        html.destination file("${buildDir}/jacocoHtml")
+	    }
+	}
+	
+	test.finalizedBy jacocoTestReport
+	check.dependsOn jacocoTestCoverageVerification
+	
+	jacocoTestCoverageVerification {
+	  violationRules {
+	    rule {
+	      limit {
+	        counter = 'LINE'
+	        value = 'COVEREDRATIO'
+	        minimum = 0.5
+	      }
+	    }
+	  }
+	}
+}
