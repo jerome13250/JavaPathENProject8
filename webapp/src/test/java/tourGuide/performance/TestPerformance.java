@@ -18,6 +18,7 @@ import gpsUtil.GpsUtil;
 import rewardCentral.RewardCentral;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.model.user.User;
+import tourGuide.repository.GpsProxy;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 
@@ -52,11 +53,12 @@ public class TestPerformance {
 		//ARRANGE:
 		Locale.setDefault(Locale.US); //necessary because of bug in GpsUtil .jar
 		GpsUtil gpsUtil = new GpsUtil();
+		GpsProxy gpsProxy = new GpsProxy();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
 		InternalTestHelper.setInternalUserNumber(1000);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService, true);
+		TourGuideService tourGuideService = new TourGuideService(gpsProxy, gpsUtil, rewardsService, true);
 		List<User> allUsers = tourGuideService.getAllUsers();
 		
 		//ACT:

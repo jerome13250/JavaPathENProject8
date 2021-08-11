@@ -10,6 +10,7 @@ bootJar {
 
 dependencies {
 	implementation files("$rootDir/libs/gpsUtil.jar", "$rootDir/libs/RewardCentral.jar", "$rootDir/libs/TripPricer.jar")
+	implementation project(':commons')
 }
 
 

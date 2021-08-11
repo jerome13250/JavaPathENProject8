@@ -20,6 +20,7 @@ import rewardCentral.RewardCentral;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.model.user.User;
 import tourGuide.model.user.UserReward;
+import tourGuide.repository.GpsProxy;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 
@@ -28,6 +29,7 @@ public class TestRewardsService {
 	TourGuideService tourGuideService;
 	RewardsService rewardsService;
 	GpsUtil gpsUtil;
+	GpsProxy gpsProxy;
 	
 	@BeforeEach
 	public void setup() {
@@ -37,10 +39,11 @@ public class TestRewardsService {
 		Locale.setDefault(Locale.US);
 		
 		gpsUtil = new GpsUtil();
+		gpsProxy = new GpsProxy();
 		rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		InternalTestHelper.setInternalUserNumber(0);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
-		tourGuideService = new TourGuideService(gpsUtil, rewardsService, true);
+		tourGuideService = new TourGuideService(gpsProxy, gpsUtil, rewardsService, true);
 
 	}
 	
@@ -83,7 +86,7 @@ public class TestRewardsService {
 		//to stay consistent with this existing test, tourGuideService is specific to this function with setInternalUserNumber(1):
 		InternalTestHelper.setInternalUserNumber(1);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService, true);
+		TourGuideService tourGuideService = new TourGuideService(gpsProxy, gpsUtil, rewardsService, true);
 		
 		//ACT:
 		rewardsService.calculateRewardsMultiThread(tourGuideService.getAllUsers());
