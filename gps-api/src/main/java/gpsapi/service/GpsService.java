@@ -32,15 +32,20 @@ public class GpsService {
 		return gpsRepository.getUserLocation(userId);
 	}
 
+	//TODO: remove this code if useless in webapp
+	/*
 	public List<Attraction> getAttractions() {
 		return gpsRepository.getAttractions();
 	}
-
+	*/
+	
+	/**
+	 * Calculates distances from a user location to all Attractions. Returns only the "numberOfAttractions" closest.
+	 * @param userLocation the location of the user
+	 * @param numberOfAttractions the number of attractions to return
+	 * @return a list of AttractionDistance that contains some attraction infos + the distance with user location.
+	 */
 	public List<AttractionDistance> getClosestAttractions(Location userLocation, Integer numberOfAttractions) {
-
-		//This DTO will contain the required data:
-		ClosestAttractionsDTO closestAttractionsDTO = new ClosestAttractionsDTO();
-		closestAttractionsDTO.setUserLocation(userLocation);
 
 		//Get list of all Attractions:
 		List<Attraction> listAttraction = gpsRepository.getAttractions();
@@ -66,6 +71,8 @@ public class GpsService {
 				.collect(Collectors.toList());
 	}
 	
+	
+	//TODO: place this in a common calculationService
 	/**
 	 * Calculates distance between two locations in nautical miles.
 	 * @param loc1 the first location

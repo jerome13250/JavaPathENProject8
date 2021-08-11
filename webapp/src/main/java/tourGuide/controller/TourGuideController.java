@@ -26,6 +26,13 @@ public class TourGuideController {
         return "Greetings from TourGuide!";
     }
     
+    /**
+     * Return the last visited VisitedLocation for a specified user name. 
+     * If User.visitedLocations is not empty it is the last one, otherwise
+	 * an update to GpsUtil for this User is required.
+     * @param userName the name of the user
+     * @return VisitedLocation json
+     */
     @RequestMapping("/getLocation") 
     public String getLocation(@RequestParam String userName) {
     	VisitedLocation visitedLocation = tourGuideService.getUserLocation(getUser(userName));

@@ -26,17 +26,12 @@ public class GpsController {
 	@Autowired
 	GpsService gpsService;
 	
-	@GetMapping("/VisitedLocation")
+	@GetMapping("/visitedLocation")
 	public VisitedLocation getVisitedLocation(@RequestParam UUID userid) {
 		return gpsService.getUserLocation(userid);
 	}
 	
-	@GetMapping("/Attractions")
-	public List<Attraction> getListAttractions() {
-		return gpsService.getAttractions();
-	}
-	
-	@GetMapping("/ClosestAttractions")
+	@GetMapping("/closestAttractions")
 	public List<AttractionDistance> getListClosestAttractions(
 			@RequestParam("long") @Min(-180) @Max(180) Double longitude,
 			@RequestParam("lat") @Min(-180) @Max(180) Double latitude,
