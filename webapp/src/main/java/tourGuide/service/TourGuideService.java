@@ -26,8 +26,6 @@ import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import lombok.extern.slf4j.Slf4j;
 import tourGuide.helper.InternalTestHelper;
-import tourGuide.model.ProviderDTO;
-import tourGuide.model.TripDealsDTO;
 import tourGuide.model.user.User;
 import tourGuide.model.user.UserReward;
 import tourGuide.repository.GpsProxy;
@@ -252,7 +250,6 @@ public class TourGuideService {
 		return closestAttractionsDTO;
 
 	}
-
 
 	/**
 	 * Return the list of every user's most recent location stored in internalUserMap.

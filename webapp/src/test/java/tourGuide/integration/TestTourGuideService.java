@@ -20,12 +20,10 @@ import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
 import tourGuide.helper.InternalTestHelper;
 
-import tourGuide.model.TripDealsDTO;
 import tourGuide.model.user.User;
 import tourGuide.model.user.UserReward;
 import tourGuide.repository.GpsProxy;
 import tourGuide.repository.impl.GpsProxyDummyImpl;
-import tourGuide.repository.impl.GpsProxyImpl;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 import tripPricer.Provider;
@@ -172,7 +170,7 @@ class TestTourGuideService {
 	}
 	
 	@Test
-	public void getTripDeals() {
+	void getTripDeals() {
 		//ARRANGE:
 		user.addUserReward(userReward1);
 		user.addUserReward(userReward2);

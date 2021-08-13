@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import commons.model.AttractionDistance;
 import commons.model.VisitedLocationDTO;
-import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
-import gpsUtil.location.VisitedLocation;
 import gpsapi.service.GpsService;
 
 @RestController
