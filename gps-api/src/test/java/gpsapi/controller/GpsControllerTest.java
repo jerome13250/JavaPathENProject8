@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import commons.model.AttractionDistance;
+import commons.model.VisitedLocationDTO;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import gpsapi.service.GpsService;
@@ -39,13 +40,8 @@ import gpsapi.service.GpsService;
 @WebMvcTest(controllers = GpsController.class)  // we are asking to initialize only one web controller
 class GpsControllerTest {
 
-	//provides functionality for reading and writing JSON:
+	@Autowired
 	private ObjectMapper objectMapper;
-
-	@BeforeEach
-	void setup() {
-		objectMapper = new ObjectMapper();
-	}
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -70,10 +66,13 @@ class GpsControllerTest {
 				.andReturn(); //this allows to get the MvcResult
 
 		//ASSERT:
-		//note: can not use objectMapper on VisitedLocation "no default constructor exist: cannot deserialize from Object value"
-		String resultString = result.getResponse().getContentAsString();
-		assertTrue(resultString.contains("\"userId\":\""+ uuid.toString() + "\""));
-		assertTrue(resultString.contains("\"location\":{\"longitude\":22.22,\"latitude\":11.11}"));
+		VisitedLocationDTO visitedLocationDTO = 
+				objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<VisitedLocationDTO>() {});
+		assertNotNull(visitedLocationDTO);
+		assertEquals(visitedLocationDTO.getUserId(), visitedLocation.userId);
+		assertEquals(visitedLocationDTO.getLocation_latitude(),visitedLocation.location.latitude);
+		assertEquals(visitedLocationDTO.getLocation_longitude(),visitedLocation.location.longitude);
+		assertEquals(visitedLocationDTO.getTimeVisited(),visitedLocation.timeVisited);		
 	}
 
 	@Test

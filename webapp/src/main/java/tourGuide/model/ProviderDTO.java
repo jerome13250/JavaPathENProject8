@@ -8,7 +8,7 @@ import tripPricer.Provider;
  *
  */
 
-
+//TODO:remove this class
 public class ProviderDTO {
 	
 	private String name;

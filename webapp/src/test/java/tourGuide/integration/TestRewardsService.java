@@ -21,10 +21,11 @@ import tourGuide.helper.InternalTestHelper;
 import tourGuide.model.user.User;
 import tourGuide.model.user.UserReward;
 import tourGuide.repository.GpsProxy;
+import tourGuide.repository.impl.GpsProxyDummyImpl;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 
-public class TestRewardsService {
+class TestRewardsService {
 
 	TourGuideService tourGuideService;
 	RewardsService rewardsService;
@@ -39,7 +40,7 @@ public class TestRewardsService {
 		Locale.setDefault(Locale.US);
 		
 		gpsUtil = new GpsUtil();
-		gpsProxy = new GpsProxy();
+		gpsProxy = new GpsProxyDummyImpl();
 		rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		InternalTestHelper.setInternalUserNumber(0);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
@@ -49,7 +50,7 @@ public class TestRewardsService {
 	
 	
 	@Test
-	public void userGetRewards() {
+	void userGetRewards() {
 		//ARRANGE:		
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		Attraction attraction = gpsUtil.getAttractions().get(0);
@@ -65,7 +66,7 @@ public class TestRewardsService {
 	}
 	
 	@Test
-	public void isWithinAttractionProximity() {
+	void isWithinAttractionProximity() {
 		Attraction attraction = gpsUtil.getAttractions().get(0);
 		assertTrue(rewardsService.isWithinAttractionProximity(attraction, attraction));
 	}
@@ -80,7 +81,7 @@ public class TestRewardsService {
 	 * 
 	 */
 	@Test
-	public void nearAllAttractions() {
+	void nearAllAttractions() {
 		//ARRANGE:
 		rewardsService.setProximityBuffer(Integer.MAX_VALUE);
 		//to stay consistent with this existing test, tourGuideService is specific to this function with setInternalUserNumber(1):

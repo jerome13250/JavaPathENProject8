@@ -78,7 +78,7 @@ public class Tracker extends Thread {
 			//multithread:
 			tourGuideService.trackUserLocationMultiThread(users);
 			
-			
+		
 			stopWatch.stop();
 			logger.debug("Tracker Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds."); 
 			stopWatch.reset();

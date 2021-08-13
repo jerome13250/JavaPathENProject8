@@ -1,16 +1,24 @@
 package tourGuide.controller;
 
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jsoniter.output.JsonStream;
 
+import commons.model.ClosestAttractionsDTO;
+import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import tourGuide.model.TripDealsDTO;
 import tourGuide.model.user.User;
+import tourGuide.model.user.UserReward;
 import tourGuide.service.TourGuideService;
+import tripPricer.Provider;
 
 @RestController
 public class TourGuideController {
@@ -19,7 +27,7 @@ public class TourGuideController {
 	TourGuideService tourGuideService;
 	
 		
-    @RequestMapping("/")
+    @GetMapping("/")
     public String index() {
         return "Greetings from TourGuide!";
     }
@@ -31,10 +39,10 @@ public class TourGuideController {
      * @param userName the name of the user
      * @return VisitedLocation json
      */
-    @RequestMapping("/getLocation") 
-    public String getLocation(@RequestParam String userName) {
+    @GetMapping("/getLocation") 
+    public Location getLocation(@RequestParam String userName) {
     	VisitedLocation visitedLocation = tourGuideService.getUserLocation(getUser(userName));
-		return JsonStream.serialize(visitedLocation.location);
+		return visitedLocation.location;
     }
     
     /**
@@ -51,15 +59,20 @@ public class TourGuideController {
      * @param userName the required user name
      * @return JSON object containing all required infos
      */
-    @RequestMapping("/getNearbyAttractions") 
-    public String getNearbyAttractions(@RequestParam String userName) {
+    @GetMapping("/getNearbyAttractions") 
+    public ClosestAttractionsDTO getNearbyAttractions(@RequestParam String userName) {
     	
-    	return JsonStream.serialize(tourGuideService.getNearbyAttractions(userName));
+    	return tourGuideService.getNearbyAttractions(userName);
     }
     
-    @RequestMapping("/getRewards") 
-    public String getRewards(@RequestParam String userName) {
-    	return JsonStream.serialize(tourGuideService.getUserRewards(getUser(userName)));
+    /**
+     * Return all the Rewards for a specific user
+     * @param userName the user name
+     * @return List of rewards for that user
+     */
+    @GetMapping("/getRewards") 
+    public List<UserReward> getRewards(@RequestParam String userName) {
+    	return tourGuideService.getUserRewards(getUser(userName));
     }
     
     /**
@@ -78,18 +91,32 @@ public class TourGuideController {
      * 
      * @return
      */
-    @RequestMapping("/getAllCurrentLocations")
-    public String getAllCurrentLocations() {
+    @GetMapping("/getAllCurrentLocations")
+    public Map<UUID,Location> getAllCurrentLocations() {
     	    	
-    	return JsonStream.serialize(tourGuideService.getAllCurrentLocations());
+    	return tourGuideService.getAllCurrentLocations();
     }
     
-    @RequestMapping("/getTripDeals")
-    public TripDealsDTO getTripDeals(@RequestParam String userName) {
-    	TripDealsDTO tripDealsDTO = tourGuideService.getTripDeals(getUser(userName));
-    	return tripDealsDTO;
+    
+    /**
+     * Calculate and return a list of providers for attractions depending on user total reward points and preferences.
+     * Note that in fact provider should be named trip deal...
+     * 
+     * @param userName
+     * @return List of providers 
+     */
+    @GetMapping("/getTripDeals")
+    public List<Provider> getTripDeals(@RequestParam String userName) {
+    	List<Provider> providers = tourGuideService.getTripDeals(getUser(userName));
+    	return providers;
     }
     
+    
+    /**
+     * Return user object from user name
+     * @param userName the user name
+     * @return the User object with the required user name
+     */
     private User getUser(String userName) {
     	return tourGuideService.getUser(userName);
     }

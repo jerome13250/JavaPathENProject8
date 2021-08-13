@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import commons.model.AttractionDistance;
+import commons.model.VisitedLocationDTO;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
@@ -27,8 +28,10 @@ public class GpsController {
 	GpsService gpsService;
 	
 	@GetMapping("/visitedLocation")
-	public VisitedLocation getVisitedLocation(@RequestParam UUID userid) {
-		return gpsService.getUserLocation(userid);
+	public VisitedLocationDTO getVisitedLocation(@RequestParam UUID userid) {
+		VisitedLocationDTO visitedLocationDTO = new VisitedLocationDTO();
+		visitedLocationDTO.copyValuesFrom(gpsService.getUserLocation(userid));
+		return visitedLocationDTO;
 	}
 	
 	@GetMapping("/closestAttractions")
@@ -40,5 +43,6 @@ public class GpsController {
 		Location userLocation = new Location(latitude, longitude);
 		return gpsService.getClosestAttractions(userLocation, numberOfAttractions);
 	}
+	
 
 }

@@ -2,6 +2,7 @@ package tourGuide.model;
 
 import java.util.List;
 
+//TODO:remove this class
 public class TripDealsDTO {
 	
 	private int adults;

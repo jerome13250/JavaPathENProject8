@@ -32,13 +32,6 @@ public class GpsService {
 		return gpsRepository.getUserLocation(userId);
 	}
 
-	//TODO: remove this code if useless in webapp
-	/*
-	public List<Attraction> getAttractions() {
-		return gpsRepository.getAttractions();
-	}
-	*/
-	
 	/**
 	 * Calculates distances from a user location to all Attractions. Returns only the "numberOfAttractions" closest.
 	 * @param userLocation the location of the user
