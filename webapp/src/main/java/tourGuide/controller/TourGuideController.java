@@ -5,18 +5,28 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import commons.model.ClosestAttractionsDTO;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
+import lombok.extern.slf4j.Slf4j;
 import tourGuide.model.user.User;
+import tourGuide.model.user.UserPreferencesDTO;
 import tourGuide.model.user.UserReward;
 import tourGuide.service.TourGuideService;
 import tripPricer.Provider;
 
+@Slf4j
 @RestController
 public class TourGuideController {
 
@@ -109,6 +119,15 @@ public class TourGuideController {
     }
     
     
+    @PatchMapping(value = "/userPreferences")
+	public ResponseEntity<UserPreferencesDTO> patchUserPreferences(@RequestBody UserPreferencesDTO userPreferencesDTO) {
+		log.info("PATCH /userPreferences called");
+		UserPreferencesDTO userPreferencesDtoUpdated = tourGuideService.patchUserPreferences(userPreferencesDTO);
+		log.info("PATCH /userPreferences response : OK");
+		return new ResponseEntity<>(userPreferencesDtoUpdated, HttpStatus.OK);
+	}
+    
+
     /**
      * Return user object from user name
      * @param userName the user name
@@ -118,5 +137,6 @@ public class TourGuideController {
     	return tourGuideService.getUser(userName);
     }
    
+
 
 }

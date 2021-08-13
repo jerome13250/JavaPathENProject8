@@ -17,16 +17,18 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import commons.model.AttractionDistance;
 import commons.model.ClosestAttractionsDTO;
-import gpsUtil.GpsUtil;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import lombok.extern.slf4j.Slf4j;
+import tourGuide.exception.BusinessResourceException;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.model.user.User;
+import tourGuide.model.user.UserPreferencesDTO;
 import tourGuide.model.user.UserReward;
 import tourGuide.repository.GpsProxy;
 import tourGuide.tracker.Tracker;
@@ -269,6 +271,32 @@ public class TourGuideService {
 		return mapUserUuidLocation;
 
 	}
+	
+	
+	public UserPreferencesDTO patchUserPreferences(UserPreferencesDTO userPreferencesDTO) {
+		
+		User user = getUser(userPreferencesDTO.getUserName());
+		
+		if(user == null) {
+			throw new BusinessResourceException(
+					"patchUserPreferencesError",
+					"User is unknown: "+ userPreferencesDTO.getUserName(),
+					HttpStatus.NOT_FOUND);
+		}
+		
+		if (userPreferencesDTO.getNumberOfAdults()!=null) {
+			user.getUserPreferences().setNumberOfAdults(userPreferencesDTO.getNumberOfAdults());
+		}
+		if (userPreferencesDTO.getNumberOfChildren()!=null) {
+			user.getUserPreferences().setNumberOfChildren(userPreferencesDTO.getNumberOfChildren());
+		}
+		if (userPreferencesDTO.getTripDuration()!=null) {
+			user.getUserPreferences().setTripDuration(userPreferencesDTO.getTripDuration());
+		}
+
+		return new UserPreferencesDTO(user);
+	}
+
 
 	//TODO: A INVESTIGUER
 	private void addShutDownHook() {
@@ -328,6 +356,8 @@ public class TourGuideService {
 		LocalDateTime localDateTime = LocalDateTime.now().minusDays(new Random().nextInt(30));
 		return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
 	}
+
+	
 
 
 }
