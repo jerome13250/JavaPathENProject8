@@ -38,7 +38,6 @@ import tripPricer.TripPricer;
 public class TourGuideService {
 
 	private final GpsProxy gpsProxy;
-	private final GpsUtil gpsUtil;
 	private final RewardsService rewardsService; 
 	private final TripPricer tripPricer = new TripPricer();
 	public final Tracker tracker;
@@ -54,8 +53,8 @@ public class TourGuideService {
 	 * @param rewardsService the reference to bean RewardsService.jar
 	 */
 	@Autowired //this defines the default constructor for Spring
-	public TourGuideService(GpsProxy gpsProxy, GpsUtil gpsUtil, RewardsService rewardsService) {
-		this(gpsProxy, gpsUtil, rewardsService, false);
+	public TourGuideService(GpsProxy gpsProxy, RewardsService rewardsService) {
+		this(gpsProxy, rewardsService, false);
 	}
 	
 	/**
@@ -66,9 +65,8 @@ public class TourGuideService {
 	 * @param rewardsService the reference to bean RewardsService.jar
 	 * @param stopTrackerAtStartup  boolean that allows Tracker to be directly stopped when true, this is for test only.
 	 */
-	public TourGuideService(GpsProxy gpsProxy, GpsUtil gpsUtil, RewardsService rewardsService, boolean stopTrackerAtStartup) {
+	public TourGuideService(GpsProxy gpsProxy, RewardsService rewardsService, boolean stopTrackerAtStartup) {
 		this.gpsProxy = gpsProxy;
-		this.gpsUtil = gpsUtil;
 		this.rewardsService = rewardsService;
 
 		if(testMode) {

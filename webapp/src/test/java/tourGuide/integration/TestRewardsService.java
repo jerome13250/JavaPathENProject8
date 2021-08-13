@@ -13,7 +13,6 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
-import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
@@ -29,22 +28,16 @@ class TestRewardsService {
 
 	TourGuideService tourGuideService;
 	RewardsService rewardsService;
-	GpsUtil gpsUtil;
 	GpsProxy gpsProxy;
 	
 	@BeforeEach
 	public void setup() {
-		//we have a bug in external jar GpsUtils due to String.format("%.6f", new Object[] { Double.valueOf(longitude) })),
-		//format uses Locale.getDefault() that create string Double with "," (when Locale=FR) instead of "."
-		//For this reason i need to change the default Locale:
-		Locale.setDefault(Locale.US);
 		
-		gpsUtil = new GpsUtil();
 		gpsProxy = new GpsProxyDummyImpl();
-		rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+		rewardsService = new RewardsService(gpsProxy, new RewardCentral());
 		InternalTestHelper.setInternalUserNumber(0);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
-		tourGuideService = new TourGuideService(gpsProxy, gpsUtil, rewardsService, true);
+		tourGuideService = new TourGuideService(gpsProxy, rewardsService, true);
 
 	}
 	
@@ -53,7 +46,7 @@ class TestRewardsService {
 	void userGetRewards() {
 		//ARRANGE:		
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
-		Attraction attraction = gpsUtil.getAttractions().get(0);
+		Attraction attraction = gpsProxy.getAttractions().get(0);
 		user.addToVisitedLocations(new VisitedLocation(user.getUserId(), attraction, new Date()));
 
 		//ACT:
@@ -67,7 +60,7 @@ class TestRewardsService {
 	
 	@Test
 	void isWithinAttractionProximity() {
-		Attraction attraction = gpsUtil.getAttractions().get(0);
+		Attraction attraction = gpsProxy.getAttractions().get(0);
 		assertTrue(rewardsService.isWithinAttractionProximity(attraction, attraction));
 	}
 	
@@ -87,14 +80,14 @@ class TestRewardsService {
 		//to stay consistent with this existing test, tourGuideService is specific to this function with setInternalUserNumber(1):
 		InternalTestHelper.setInternalUserNumber(1);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
-		TourGuideService tourGuideService = new TourGuideService(gpsProxy, gpsUtil, rewardsService, true);
+		TourGuideService tourGuideService = new TourGuideService(gpsProxy, rewardsService, true);
 		
 		//ACT:
 		rewardsService.calculateRewardsMultiThread(tourGuideService.getAllUsers());
 		
 		//ASSERT:
 		List<UserReward> userRewards = tourGuideService.getUserRewards(tourGuideService.getAllUsers().get(0));
-		assertEquals(gpsUtil.getAttractions().size(), userRewards.size());
+		assertEquals(gpsProxy.getAttractions().size(), userRewards.size());
 	}
 	
 }

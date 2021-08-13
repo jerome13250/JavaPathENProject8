@@ -1,8 +1,11 @@
 package tourGuide.repository.impl;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -10,8 +13,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import commons.model.AttractionDTO;
 import commons.model.AttractionDistance;
 import commons.model.VisitedLocationDTO;
+import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,6 +42,11 @@ public class GpsProxyImpl implements GpsProxy {
     
     @Value( "${gpsapi.apiUrl}" )
     private String gpsApiUrl;
+    
+    /*
+    @Autowired
+    RestTemplate restTemplate;
+    */
     
     @Override
 	public VisitedLocation getVisitedLocation(UUID userid) {
@@ -85,6 +95,31 @@ public class GpsProxyImpl implements GpsProxy {
 
     	return response.getBody();
     }
+
+
+	@Override
+	public List<Attraction> getAttractions() {
+
+		String getNearbyAttractionsUrl = gpsApiUrl + "/attractions";
+
+    	//TODO: create a bean for RestTemplate ????
+    	RestTemplate restTemplate = new RestTemplate();
+    	ResponseEntity<List<AttractionDTO>> response = restTemplate.exchange(
+    			getNearbyAttractionsUrl,
+    			HttpMethod.GET,
+    			null,
+    			new ParameterizedTypeReference<List<AttractionDTO>>() {}
+    			);
+
+    	log.debug("Get Attractions call " + response.getStatusCode().toString());
+
+    	//convert List<AttractionDTO> to List<Attraction>
+    	return response.getBody()
+    			.stream()
+    			.map(atdto -> atdto.convertToAttraction())
+    			.collect(Collectors.toList());
+		
+	}
 
 	
 

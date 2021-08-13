@@ -2,6 +2,7 @@ package gpsapi.controller;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import commons.model.AttractionDTO;
 import commons.model.AttractionDistance;
 import commons.model.VisitedLocationDTO;
 import gpsUtil.location.Location;
@@ -42,5 +44,15 @@ public class GpsController {
 		return gpsService.getClosestAttractions(userLocation, numberOfAttractions);
 	}
 	
+	@GetMapping("/attractions")
+	public List<AttractionDTO> getAttractions() {
+		
+		//convert List<Attraction> to List<AttractionDTO>
+		return gpsService.getAttractions().stream().map(at -> new AttractionDTO(at)).collect(Collectors.toList());
+			
+	}
 
+	
+	
+	
 }

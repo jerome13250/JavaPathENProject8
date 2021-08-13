@@ -61,19 +61,17 @@ class TestPerformance {
 		setLogLevel("INFO", "org.springframework.web.HttpLogging");
 		
 		//ARRANGE:
-		Locale.setDefault(Locale.US); //necessary because of bug in GpsUtil .jar
-		GpsUtil gpsUtil = new GpsUtil();
 		
 		GpsProxyImpl gpsProxy = new GpsProxyImpl();
 		//note : since spring boot is not used to create context, GpsProxyImpl.gpsApiUrl is unset.
 		//we need to set it:
 		gpsProxy.setGpsApiUrl("http://localhost:9001/");
 		
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+		RewardsService rewardsService = new RewardsService(gpsProxy, new RewardCentral());
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
 		InternalTestHelper.setInternalUserNumber(100);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
-		TourGuideService tourGuideService = new TourGuideService(gpsProxy, gpsUtil, rewardsService, true);
+		TourGuideService tourGuideService = new TourGuideService(gpsProxy, rewardsService, true);
 		List<User> allUsers = tourGuideService.getAllUsers();
 		
 		//ACT:
@@ -98,16 +96,14 @@ class TestPerformance {
 	@Disabled
 	public void highVolumeGetRewards() {
 		//ARRANGE:
-		Locale.setDefault(Locale.US); //necessary because of bug in GpsUtil .jar
-		GpsUtil gpsUtil = new GpsUtil();
 		GpsProxy gpsProxy = new GpsProxyImpl();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+		RewardsService rewardsService = new RewardsService(gpsProxy, new RewardCentral());
 		// Users should be incremented up to 100,000, and test finishes within 20 minutes
 		InternalTestHelper.setInternalUserNumber(10);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
-		TourGuideService tourGuideService = new TourGuideService(gpsProxy, gpsUtil, rewardsService, true);
+		TourGuideService tourGuideService = new TourGuideService(gpsProxy, rewardsService, true);
 		//Add the first attraction in GpsUtils internal list to all users:
-		Attraction attraction = gpsUtil.getAttractions().get(0);
+		Attraction attraction = gpsProxy.getAttractions().get(0);
 		List<User> allUsers = tourGuideService.getAllUsers();
 		allUsers.forEach(u -> u.addToVisitedLocations(new VisitedLocation(u.getUserId(), attraction, new Date())));
 		
@@ -138,8 +134,7 @@ class TestPerformance {
         
         ch.qos.logback.classic.Logger logger = loggerContext.getLogger(packageName);
         
-        System.out.println(packageName + " current logger level: " + logger.getLevel());
-        System.out.println(" You entered: " + logLevel);
+        log.info(packageName + " logger level modified from: {} to: {}", logger.getLevel(),logLevel);
  
         logger.setLevel(Level.toLevel(logLevel));
     }

@@ -67,4 +67,17 @@ public class GpsProxyDummyImpl implements GpsProxy {
     	return listAttractionDistance;
     }
 
+	@Override
+	public List<Attraction> getAttractions() {
+		Attraction at1 = new Attraction("attractionName1", "city1", "state1", 11.1d, 22.2d);
+		Attraction at2 = new Attraction("attractionName2", "city2", "state2", 33.3d, 44.4d);
+		Attraction at3 = new Attraction("attractionName3", "city3", "state3", 55.5d, 66.6d);
+		Attraction at4 = new Attraction("attractionName4", "city4", "state4", 77.7d, 88.8d);
+		Attraction at5 = new Attraction("attractionName5", "city5", "state5", 99.9d, 111.1d);
+		Attraction[] arr = {at1,at2,at3,at4,at5};
+		List<Attraction> listAttraction = Arrays.asList(arr);
+
+    	return listAttraction;
+	}
+
 }

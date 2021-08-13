@@ -52,18 +52,13 @@ class TestTourGuideService {
 	
 	@BeforeEach
 	public void setup() {
-		//we have a bug in external jar GpsUtils due to String.format("%.6f", new Object[] { Double.valueOf(longitude) })),
-		//format uses Locale.getDefault() that create string Double with "," (when Locale=FR) instead of "."
-		//For this reason i need to change the default Locale:
-		Locale.setDefault(Locale.US);
 		
-		GpsUtil gpsUtil = new GpsUtil();
 		//We need a dummy implementation since gps-api is external
 		GpsProxy gpsProxy = new GpsProxyDummyImpl();
-		rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+		rewardsService = new RewardsService(gpsProxy, new RewardCentral());
 		InternalTestHelper.setInternalUserNumber(0);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
-		tourGuideService = new TourGuideService(gpsProxy, gpsUtil, rewardsService, true);
+		tourGuideService = new TourGuideService(gpsProxy, rewardsService, true);
 
 		//objects for tests:
 		user = new User(UUID.randomUUID(), "john", "000", "john@tourGuide.com");

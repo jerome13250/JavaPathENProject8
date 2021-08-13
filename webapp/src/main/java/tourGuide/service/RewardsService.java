@@ -7,22 +7,20 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
+import lombok.extern.slf4j.Slf4j;
 import rewardCentral.RewardCentral;
 import tourGuide.model.user.User;
 import tourGuide.model.user.UserReward;
+import tourGuide.repository.GpsProxy;
 
+@Slf4j
 @Service
 public class RewardsService {
-	
-	private Logger logger = LoggerFactory.getLogger(RewardsService.class);
 		
     private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
 
@@ -30,14 +28,14 @@ public class RewardsService {
     private int defaultProximityBuffer = 10;
 	private int proximityBuffer = defaultProximityBuffer;
 	private int attractionProximityRange = 200;
-	private final GpsUtil gpsUtil;
+	private final GpsProxy gpsProxy;
 	private final RewardCentral rewardsCentral;
 	
 	//After tests, CachedThreadPool is the fastest.
 	private final ExecutorService executorService = Executors.newCachedThreadPool();
 	
-	public RewardsService(GpsUtil gpsUtil, RewardCentral rewardCentral) {
-		this.gpsUtil = gpsUtil;
+	public RewardsService(GpsProxy gpsProxy, RewardCentral rewardCentral) {
+		this.gpsProxy = gpsProxy;
 		this.rewardsCentral = rewardCentral;
 	}
 	
@@ -50,7 +48,7 @@ public class RewardsService {
 	}
 	
 	/**
-	 * This function gets all VisitedLocation for a User, then gets all Attractions provided by GpsUtils.
+	 * This function gets all VisitedLocation for a User, then gets all Attractions provided by GpsProxys.
 	 * Everytime we call this function, it checks on user location history (why all history ?), if it has no previous UserReward on specific attraction
 	 * then if the attraction is close enough ( function nearAttraction ) we add a Reward to the user.
 	 * 
@@ -60,7 +58,7 @@ public class RewardsService {
 	public void calculateRewards(User user) {
 		 
 		List<VisitedLocation> userLocations = user.getVisitedLocations(); 
-		List<Attraction> attractions = gpsUtil.getAttractions();
+		List<Attraction> attractions = gpsProxy.getAttractions();
 		
 		//TODO: this is stupid, rewards should be calculated on the last Location only. 
 		//Otherwise the more we have history the more we'll have to calculate distances.
@@ -69,7 +67,7 @@ public class RewardsService {
 				if(user.getUserRewards().stream().filter(r -> r.attraction.attractionName.equals(attraction.attractionName)).count() == 0) {
 					if(nearAttraction(visitedLocation, attraction)) {
 						user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
-						logger.debug("user has rewards : {}", user.getUserName());
+						log.debug("user has rewards : {}", user.getUserName());
 					}
 				}
 			}
@@ -77,7 +75,7 @@ public class RewardsService {
 	}
 	
 	/**
-	 * This function gets the last VisitedLocation for a list of users, then gets all Attractions provided by GpsUtils.
+	 * This function gets the last VisitedLocation for a list of users, then gets all Attractions provided by GpsProxys.
 	 * It checks for each user last visited location that if it has no previous UserReward on specific attraction
 	 * and if the attraction is close enough ( function nearAttraction ) we add a Reward to the user.
 	 * 
@@ -85,7 +83,7 @@ public class RewardsService {
 	 */
 	public void calculateRewardsMultiThread(List<User> userList) {
 
-		List<Attraction> attractions = gpsUtil.getAttractions();
+		List<Attraction> attractions = gpsProxy.getAttractions();
 		List<Future> listFuture = new ArrayList<>();
 
 		for(User user : userList) {
@@ -98,7 +96,7 @@ public class RewardsService {
 						VisitedLocation lastVisitedLocation = user.getVisitedLocations().get(user.getVisitedLocations().size()-1);
 						if(nearAttraction(lastVisitedLocation, attraction)) {
 							user.addUserReward(new UserReward(lastVisitedLocation, attraction, getRewardPoints(attraction, user)));
-							//logger.debug("user has rewards : {}", user.getUserName());
+							//log.debug("user has rewards : {}", user.getUserName());
 						}
 					}
 				}
