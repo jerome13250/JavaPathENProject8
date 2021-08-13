@@ -272,7 +272,11 @@ public class TourGuideService {
 
 	}
 	
-	
+	/**
+	 * Patch command that allows user to modify their preferences.
+	 * @param userPreferencesDTO
+	 * @return
+	 */
 	public UserPreferencesDTO patchUserPreferences(UserPreferencesDTO userPreferencesDTO) {
 		
 		User user = getUser(userPreferencesDTO.getUserName());

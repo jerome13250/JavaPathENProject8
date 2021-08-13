@@ -118,7 +118,11 @@ public class TourGuideController {
     	return providers;
     }
     
-    
+    /**
+     * Patch command that allows to update user preferencies
+     * @param userPreferencesDTO with username and values to modify
+     * @return the userPreferencesDTO result
+     */
     @PatchMapping(value = "/userPreferences")
 	public ResponseEntity<UserPreferencesDTO> patchUserPreferences(@RequestBody UserPreferencesDTO userPreferencesDTO) {
 		log.info("PATCH /userPreferences called");
