@@ -133,6 +133,27 @@ class TourGuideControllerTest {
 		assertEquals(objectMapper.writeValueAsString(location1), resultLocationAsString);
 
 	}
+	
+	@Test
+	void GET_getLocation_UnknownUser_shouldFail() throws Exception {
+
+		//ARRANGE
+		when(tourGuideService.getUser("john")).thenThrow(new BusinessResourceException(
+				"patchUserPreferencesError",
+				"User is unknown: "+ "john",
+				HttpStatus.NOT_FOUND));
+
+		//ACT
+		MvcResult result = mockMvc
+				.perform(get("/getLocation?userName=john"))
+				.andExpect(status().isNotFound())
+				.andReturn();
+
+		//ASSERT
+		String responseAsString = result.getResponse().getContentAsString();
+		assertTrue(responseAsString.contains("\"errorMessage\":\"User is unknown: john\""));
+
+	}
 
 	@Test
 	void GET_getNearbyAttractions_shouldSucceed() throws Exception {

@@ -111,7 +111,16 @@ public class TourGuideService {
 	 * @return User object
 	 */
 	public User getUser(String userName) {
-		return internalUserMap.get(userName);
+		User user = internalUserMap.get(userName);
+		
+		if(user == null) {
+			throw new BusinessResourceException(
+					"UserUnknownError",
+					"User is unknown: "+ userName,
+					HttpStatus.NOT_FOUND);
+		}
+		
+		return user;
 	}
 
 	/**
@@ -281,12 +290,7 @@ public class TourGuideService {
 		
 		User user = getUser(userPreferencesDTO.getUserName());
 		
-		if(user == null) {
-			throw new BusinessResourceException(
-					"patchUserPreferencesError",
-					"User is unknown: "+ userPreferencesDTO.getUserName(),
-					HttpStatus.NOT_FOUND);
-		}
+		
 		
 		if (userPreferencesDTO.getNumberOfAdults()!=null) {
 			user.getUserPreferences().setNumberOfAdults(userPreferencesDTO.getNumberOfAdults());

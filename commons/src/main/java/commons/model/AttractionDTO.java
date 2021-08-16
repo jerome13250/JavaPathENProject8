@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * This is a conversion class to ease transfert for the Attraction object.
+ * This is a conversion class to ease transfer for the Attraction object.
  * Since Attraction does not have a default empty constructor it cannot be deserialized by Jackson.
  *
  * @author jerome

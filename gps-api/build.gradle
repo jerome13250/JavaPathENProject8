@@ -16,8 +16,12 @@ directory, then you need to use the special Project.getRootDir() property to con
 */
 dependencies {
 	
-	implementation files("$rootDir/libs/gpsUtil.jar") //path that’s relative to the root project directory
+	//implementation files("$rootDir/libs/gpsUtil.jar") //path that’s relative to the root project directory
+	
 	implementation project(':commons')
 	//To use the Java Validation API, we have to add a JSR 303 implementation such as hibernate-validator:
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	//Swagger:
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+	
 }
