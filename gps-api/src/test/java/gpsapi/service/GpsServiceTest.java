@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,6 +30,19 @@ class GpsServiceTest {
 	@Mock
 	GpsRepository gpsRepository;
 
+	List<Attraction> listAttraction;
+
+	@BeforeEach
+	void init() {
+		Attraction at1 = new Attraction("attraction1", "city1", "state1", 10, 10);
+		Attraction at2 = new Attraction("attraction2", "city2", "state2", 20, 20);
+		Attraction at3 = new Attraction("attraction3", "city3", "state3", 30, 30);
+		Attraction at4 = new Attraction("attraction4", "city4", "state4", 40, 40);
+		Attraction at5 = new Attraction("attraction5", "city5", "state5", 50, 50);
+		Attraction[] arr = {at5,at4,at3,at2,at1};
+		listAttraction = Arrays.asList(arr);
+	}
+
 	@Test
 	void test_getUserLocation() {
 		//ARRANGE:
@@ -45,20 +59,13 @@ class GpsServiceTest {
 		assertEquals(expectedVisitedLocation,resultVisitedLocation,"Returned VisitedLocation must be same as gpsUtils");
 	}
 
-	
+
 	@Test
 	void test_getClosestAttractions() {
 		//ARRANGE:
-		Attraction at1 = new Attraction("attraction1", "city1", "state1", 10, 10);
-		Attraction at2 = new Attraction("attraction2", "city2", "state2", 20, 20);
-		Attraction at3 = new Attraction("attraction3", "city3", "state3", 30, 30);
-		Attraction at4 = new Attraction("attraction4", "city4", "state4", 40, 40);
-		Attraction at5 = new Attraction("attraction5", "city5", "state5", 50, 50);
-		Attraction[] arr = {at5,at4,at3,at2,at1};
-		List<Attraction> listAttraction = Arrays.asList(arr);
 		when(gpsRepository.getAttractions()).thenReturn(listAttraction);
 		Location userLocation = new Location(5, 5);
-		
+
 		//ACT:
 		List<AttractionDistance> resultListAttractionDistance = gsService.getClosestAttractions(userLocation, 3);
 
@@ -76,7 +83,24 @@ class GpsServiceTest {
 		assertEquals(30,resultListAttractionDistance.get(2).getLatitude());
 		assertEquals(30,resultListAttractionDistance.get(2).getLongitude());
 		assertEquals(2372,resultListAttractionDistance.get(2).getDistance(),1);
-		
+
 	}
 
+	@Test
+	void test_getAttractions() {
+		//ARRANGE:
+		when(gpsRepository.getAttractions()).thenReturn(listAttraction);
+
+		//ACT:
+		List<Attraction> listAttractionResult = gsService.getAttractions();
+
+		//ASSERT:
+		assertEquals(5,listAttractionResult.size(),"Returned List is expected to have size=5");
+		assertEquals("attraction5",listAttractionResult.get(0).attractionName);
+		assertEquals(50,listAttractionResult.get(0).latitude);
+		assertEquals(50,listAttractionResult.get(0).longitude);
+		assertEquals("city5",listAttractionResult.get(0).city);
+		assertEquals("state5",listAttractionResult.get(0).state);
+
+	}
 }

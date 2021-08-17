@@ -1,4 +1,4 @@
-package gpsapi.config;
+package rewardapi.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,15 +17,15 @@ public class SwaggerConfig {
 	public Docket api() {
 		return new Docket(DocumentationType.SWAGGER_2)
 				.select()
-				.apis(RequestHandlerSelectors.basePackage("gpsapi.controller"))
+				.apis(RequestHandlerSelectors.basePackage("rewardapi.controller"))
 				.paths(PathSelectors.regex("/.*"))
 				.build().apiInfo(apiEndPointsInfo());
 	}
 
 	private ApiInfo apiEndPointsInfo() {
 		
-		return new ApiInfoBuilder().title("GPS REST API")
-				.description("Gps rest api that encapsulates gpsUtils.jar")
+		return new ApiInfoBuilder().title("REWARD REST API")
+				.description("Reward rest api that encapsulates RewardCentral.jar")
 				.contact(new Contact("Lassus Jerome", "www.example.com", "jerome@mail.com"))
 				.license("Apache 2.0")
 				.licenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html")

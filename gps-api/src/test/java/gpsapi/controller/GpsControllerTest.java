@@ -23,8 +23,10 @@ import org.springframework.test.web.servlet.MvcResult;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import commons.model.AttractionDTO;
 import commons.model.AttractionDistance;
 import commons.model.VisitedLocationDTO;
+import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import gpsapi.service.GpsService;
@@ -96,7 +98,31 @@ class GpsControllerTest {
 
 	}
 
+	@Test
+	void testGetAttractions() throws Exception {
+		//ARRANGE:
+		Attraction at1 = new Attraction("attractionName1", "city1", "state1", 10, 10);
+		Attraction at2 = new Attraction("attractionName2", "city2", "state2", 20, 20);
+		List<Attraction> listAttraction = new ArrayList<>();
+		listAttraction.add(at1);
+		listAttraction.add(at2);
 
+		when(gpsService.getAttractions()).thenReturn(listAttraction);
+
+		//ACT:
+		MvcResult result = 
+				mockMvc.perform(get("/attractions"))
+				.andExpect(status().isOk())
+				.andReturn(); //this allows to get the MvcResult
+
+		//ASSERT:
+		List<AttractionDTO> resultListAttractionDTO = 
+				objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<AttractionDTO>>() {});
+		assertEquals(2, resultListAttractionDTO.size());
+		assertEquals("attractionName1", resultListAttractionDTO.get(0).getAttractionName());
+		assertEquals("attractionName2", resultListAttractionDTO.get(1).getAttractionName());
+
+	}
 
 
 }

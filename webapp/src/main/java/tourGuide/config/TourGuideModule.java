@@ -12,14 +12,14 @@ import tourGuide.service.RewardsService;
 @Configuration
 public class TourGuideModule {
 	
-	@Autowired
+/*	@Autowired
 	GpsProxy gpsProxy;
 	
 	@Bean
 	public RewardsService getRewardsService() {
 		return new RewardsService(gpsProxy, getRewardCentral());
 	}
-	
+*/	
 	@Bean
 	public RewardCentral getRewardCentral() {
 		return new RewardCentral();

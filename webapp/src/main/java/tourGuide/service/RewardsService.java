@@ -7,6 +7,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import gpsUtil.location.Attraction;
@@ -34,6 +35,7 @@ public class RewardsService {
 	//After tests, CachedThreadPool is the fastest.
 	private final ExecutorService executorService = Executors.newCachedThreadPool();
 	
+	@Autowired
 	public RewardsService(GpsProxy gpsProxy, RewardCentral rewardCentral) {
 		this.gpsProxy = gpsProxy;
 		this.rewardsCentral = rewardCentral;
@@ -49,8 +51,9 @@ public class RewardsService {
 	
 	/**
 	 * This function gets all VisitedLocation for a User, then gets all Attractions provided by GpsProxys.
-	 * Everytime we call this function, it checks on user location history (why all history ?), if it has no previous UserReward on specific attraction
-	 * then if the attraction is close enough ( function nearAttraction ) we add a Reward to the user.
+	 * Everytime we call this function, it checks on user location history (why all history ?), if it has 
+	 * no previous UserReward on specific attraction then if the attraction is close enough ( function nearAttraction )
+	 *  we add a Reward to the user.
 	 * 
 	 * @param user
 	 */
