@@ -52,17 +52,17 @@ public class GpsController {
 	@GetMapping("/closestAttractions")
 	public List<AttractionDistance> getListClosestAttractions(
 			@ApiParam(
-					value = "Longitude of the place.",
+					value = "Longitude of the place. Min=-180, max=+180.",
 					example = "-73.968849182")
 			@RequestParam("long") @Min(-180) @Max(180) Double longitude,
 			
 			@ApiParam(
-					value = "Latitude of the place.",
+					value = "Latitude of the place. Min=-180, max=+180.",
 					example = "40.78037261962")
 			@RequestParam("lat") @Min(-180) @Max(180) Double latitude,
 			
 			@ApiParam(
-					value = "Number of attractions to return.",
+					value = "Number of attractions to return. Must be positive.",
 					example = "4")
 			@RequestParam("number") @Positive Integer numberOfAttractions) {
 

@@ -13,10 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @ControllerAdvice//(basePackages = {"tourGuide"} ) 
 public class GlobalExceptionHandlerController extends ResponseEntityExceptionHandler{
-
-	public GlobalExceptionHandlerController(){
-		log.info("Inside constructor GlobalExceptionHandlerController for commons");
-	}
 	
 	@ExceptionHandler(BusinessResourceException.class)
     public ResponseEntity<BusinessResourceExceptionDTO> businessResourceError(HttpServletRequest req, BusinessResourceException ex) {

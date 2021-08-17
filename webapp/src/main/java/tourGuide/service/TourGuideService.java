@@ -25,7 +25,7 @@ import commons.model.ClosestAttractionsDTO;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import lombok.extern.slf4j.Slf4j;
-import tourGuide.exception.BusinessResourceException;
+import commons.exception.BusinessResourceException;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.model.user.User;
 import tourGuide.model.user.UserPreferencesDTO;

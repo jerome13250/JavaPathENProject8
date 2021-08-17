@@ -16,12 +16,12 @@ import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import gpsapi.repository.GpsRepository;
+import lombok.extern.slf4j.Slf4j;
 import commons.model.ClosestAttractionsDTO;
 
+@Slf4j
 @Service
 public class GpsService {
-
-	private Logger logger = LoggerFactory.getLogger(GpsService.class);
 	
     private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
 	
