@@ -27,8 +27,7 @@ subprojects {
 	
 	sourceCompatibility = 1.8
 	targetCompatibility = 1.8
-	
-	
+
 	configurations {
 		compileOnly {
 			extendsFrom annotationProcessor
@@ -38,6 +37,11 @@ subprojects {
 	dependencies {
 		implementation 'org.springframework.boot:spring-boot-starter-actuator'
 		implementation 'org.springframework.boot:spring-boot-starter-web'
+		
+		//in the case of multi-project builds, if you want to use a path that’s relative to the root project
+		//directory, then you need to use the special Project.getRootDir()
+		//https://docs.gradle.org/current/userguide/working_with_files.html#sec:single_file_paths
+		implementation files("$rootDir/libs/gpsUtil.jar", "$rootDir/libs/RewardCentral.jar")
 		
 	    implementation group: 'org.javamoney', name: 'moneta', version: '1.3'
 	    implementation group: 'com.jsoniter', name: 'jsoniter', version: '0.9.23'

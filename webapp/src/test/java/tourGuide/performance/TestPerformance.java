@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.time.StopWatch;
@@ -15,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
-import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +51,7 @@ class TestPerformance {
 	
 
 	@Test
-	public void highVolumeTrackLocation() {
+	void highVolumeTrackLocation() {
 		//Since we do not use @SpringBootTest, the context and application.properties are not loaded
 		//we have to set log levels here otherwise we are flooded by DEBUG messages from HTTP or RestTemplate
 		setLogLevel("INFO", "tourGuide.repository.impl.GpsProxyImpl");
@@ -94,7 +92,7 @@ class TestPerformance {
 	
 	@Test
 	@Disabled
-	public void highVolumeGetRewards() {
+	void highVolumeGetRewards() {
 		//ARRANGE:
 		GpsProxy gpsProxy = new GpsProxyImpl();
 		RewardsService rewardsService = new RewardsService(gpsProxy, new RewardCentral());

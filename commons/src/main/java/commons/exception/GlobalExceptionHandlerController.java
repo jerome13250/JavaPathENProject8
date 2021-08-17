@@ -1,4 +1,4 @@
-package tourGuide.exception;
+package commons.exception;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -11,14 +11,14 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@ControllerAdvice(basePackages = {"tourGuide"} ) 
+@ControllerAdvice//(basePackages = {"tourGuide"} ) 
 public class GlobalExceptionHandlerController extends ResponseEntityExceptionHandler{
 
 	public GlobalExceptionHandlerController(){
-		log.info("Inside constructor GlobalExceptionHandlerController for webapp");
+		log.info("Inside constructor GlobalExceptionHandlerController for commons");
 	}
 	
-    @ExceptionHandler(BusinessResourceException.class)
+	@ExceptionHandler(BusinessResourceException.class)
     public ResponseEntity<BusinessResourceExceptionDTO> businessResourceError(HttpServletRequest req, BusinessResourceException ex) {
         BusinessResourceExceptionDTO response = new BusinessResourceExceptionDTO();
         response.setStatus(ex.getStatus());

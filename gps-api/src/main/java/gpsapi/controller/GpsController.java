@@ -21,11 +21,17 @@ import gpsUtil.location.Location;
 import gpsapi.service.GpsService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @Validated
 public class GpsController {
 
+	GpsController(){
+		log.info("Inside constructor GpsController");
+	}
+	
 	@Autowired
 	GpsService gpsService;
 
