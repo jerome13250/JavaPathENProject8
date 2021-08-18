@@ -21,8 +21,10 @@ import rewardCentral.RewardCentral;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.model.user.User;
 import tourGuide.repository.GpsProxy;
+import tourGuide.repository.RewardProxy;
 import tourGuide.repository.impl.GpsProxyImpl;
-import tourGuide.service.RewardsService;
+import tourGuide.repository.impl.RewardProxyImpl;
+import tourGuide.service.RewardService;
 import tourGuide.service.TourGuideService;
 
 @Slf4j
@@ -59,13 +61,15 @@ class TestPerformance {
 		setLogLevel("INFO", "org.springframework.web.HttpLogging");
 		
 		//ARRANGE:
-		
 		GpsProxyImpl gpsProxy = new GpsProxyImpl();
-		//note : since spring boot is not used to create context, GpsProxyImpl.gpsApiUrl is unset.
-		//we need to set it:
+		//note : since spring boot is not used to create context, GpsProxyImpl.gpsApiUrl is unset. we need to set it:
 		gpsProxy.setGpsApiUrl("http://localhost:9001/");
 		
-		RewardsService rewardsService = new RewardsService(gpsProxy, new RewardCentral());
+		RewardProxyImpl rewardProxy = new RewardProxyImpl();
+		//note : since spring boot is not used to create context, RewardProxyImpl.rewardApiUrl is unset. we need to set it:
+		rewardProxy.setRewardApiUrl("http://localhost:9002/");
+		
+		RewardService rewardsService = new RewardService(gpsProxy, rewardProxy);
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
 		InternalTestHelper.setInternalUserNumber(100);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
@@ -95,9 +99,14 @@ class TestPerformance {
 	void highVolumeGetRewards() {
 		//ARRANGE:
 		GpsProxy gpsProxy = new GpsProxyImpl();
-		RewardsService rewardsService = new RewardsService(gpsProxy, new RewardCentral());
+		
+		RewardProxyImpl rewardProxy = new RewardProxyImpl();
+		//note : since spring boot is not used to create context, RewardProxyImpl.rewardApiUrl is unset. we need to set it:
+		rewardProxy.setRewardApiUrl("http://localhost:9002/");
+		
+		RewardService rewardsService = new RewardService(gpsProxy, rewardProxy);
 		// Users should be incremented up to 100,000, and test finishes within 20 minutes
-		InternalTestHelper.setInternalUserNumber(10);
+		InternalTestHelper.setInternalUserNumber(100);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
 		TourGuideService tourGuideService = new TourGuideService(gpsProxy, rewardsService, true);
 		//Add the first attraction in GpsUtils internal list to all users:

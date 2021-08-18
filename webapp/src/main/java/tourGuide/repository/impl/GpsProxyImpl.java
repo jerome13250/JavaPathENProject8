@@ -1,11 +1,9 @@
 package tourGuide.repository.impl;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -43,11 +41,6 @@ public class GpsProxyImpl implements GpsProxy {
     @Value( "${gpsapi.apiUrl}" )
     private String gpsApiUrl;
     
-    /*
-    @Autowired
-    RestTemplate restTemplate;
-    */
-    
     @Override
 	public VisitedLocation getVisitedLocation(UUID userid) {
 
@@ -55,7 +48,6 @@ public class GpsProxyImpl implements GpsProxy {
     			+ "/visitedLocation?userid="
     			+ userid;
     	
-    	//TODO: create a bean for RestTemplate ????
     	RestTemplate restTemplate = new RestTemplate();
     	ResponseEntity<VisitedLocationDTO> response = restTemplate.exchange(
     			getVisitedLocationUrl,
@@ -66,7 +58,7 @@ public class GpsProxyImpl implements GpsProxy {
 
     	log.debug("Get VisitedLocation call " + response.getStatusCode().toString());
 
-    	return response.getBody().convertToVisitedLocation();
+    	return response.getBody()!=null ? response.getBody().convertToVisitedLocation() : null;
 
 	}
     
@@ -82,7 +74,6 @@ public class GpsProxyImpl implements GpsProxy {
     			+ "&number="
     			+ numberOfAttraction;
 
-    	//TODO: create a bean for RestTemplate ????
     	RestTemplate restTemplate = new RestTemplate();
     	ResponseEntity<List<AttractionDistance>> response = restTemplate.exchange(
     			getNearbyAttractionsUrl,
@@ -102,7 +93,7 @@ public class GpsProxyImpl implements GpsProxy {
 
 		String getNearbyAttractionsUrl = gpsApiUrl + "/attractions";
 
-    	//TODO: create a bean for RestTemplate ????
+
     	RestTemplate restTemplate = new RestTemplate();
     	ResponseEntity<List<AttractionDTO>> response = restTemplate.exchange(
     			getNearbyAttractionsUrl,
@@ -114,10 +105,9 @@ public class GpsProxyImpl implements GpsProxy {
     	log.debug("Get Attractions call " + response.getStatusCode().toString());
 
     	//convert List<AttractionDTO> to List<Attraction>
-    	return response.getBody()
-    			.stream()
-    			.map(atdto -> atdto.convertToAttraction())
-    			.collect(Collectors.toList());
+    	return response.getBody()!=null ?
+    			response.getBody().stream().map(atdto -> atdto.convertToAttraction()).collect(Collectors.toList())
+    			: null;
 		
 	}
 

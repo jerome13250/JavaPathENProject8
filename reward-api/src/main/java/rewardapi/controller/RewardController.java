@@ -21,7 +21,7 @@ public class RewardController {
 
 	@ApiOperation(value = "This url returns the number of rewards points for a required user id and attraction id.")
 	@GetMapping("/attractionRewardPoints")
-	public int getAttractionRewardPoints(
+	public Integer getAttractionRewardPoints(
 			@ApiParam(
 					value = "Attraction ID in UUID format.",
 					example = "123e4567-e89b-12d3-a456-426614174000")

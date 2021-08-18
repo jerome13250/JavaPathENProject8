@@ -15,20 +15,21 @@ import commons.model.ClosestAttractionsDTO;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
-import rewardCentral.RewardCentral;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.model.user.User;
 import tourGuide.model.user.UserReward;
 import tourGuide.repository.GpsProxy;
+import tourGuide.repository.RewardProxy;
 import tourGuide.repository.impl.GpsProxyDummyImpl;
-import tourGuide.service.RewardsService;
+import tourGuide.repository.impl.RewardProxyDummyImpl;
+import tourGuide.service.RewardService;
 import tourGuide.service.TourGuideService;
 import tripPricer.Provider;
 
 class TestTourGuideService {
 
 	TourGuideService tourGuideService;
-	RewardsService rewardsService;
+	RewardService rewardsService;
 	
 	//reference to objects used in different tests:
 	User user;
@@ -52,7 +53,8 @@ class TestTourGuideService {
 		
 		//We need a dummy implementation since gps-api is external
 		GpsProxy gpsProxy = new GpsProxyDummyImpl();
-		rewardsService = new RewardsService(gpsProxy, new RewardCentral());
+		RewardProxy rewardProxy = new RewardProxyDummyImpl();
+		rewardsService = new RewardService(gpsProxy, rewardProxy);
 		InternalTestHelper.setInternalUserNumber(0);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
 		tourGuideService = new TourGuideService(gpsProxy, rewardsService, true);

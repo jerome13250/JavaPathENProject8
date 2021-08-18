@@ -14,14 +14,14 @@ import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import lombok.extern.slf4j.Slf4j;
-import rewardCentral.RewardCentral;
 import tourGuide.model.user.User;
 import tourGuide.model.user.UserReward;
 import tourGuide.repository.GpsProxy;
+import tourGuide.repository.RewardProxy;
 
 @Slf4j
 @Service
-public class RewardsService {
+public class RewardService {
 		
     private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
 
@@ -30,15 +30,15 @@ public class RewardsService {
 	private int proximityBuffer = defaultProximityBuffer;
 	private int attractionProximityRange = 200;
 	private final GpsProxy gpsProxy;
-	private final RewardCentral rewardsCentral;
+	private final RewardProxy rewardProxy;
 	
 	//After tests, CachedThreadPool is the fastest.
 	private final ExecutorService executorService = Executors.newCachedThreadPool();
 	
 	@Autowired
-	public RewardsService(GpsProxy gpsProxy, RewardCentral rewardCentral) {
+	public RewardService(GpsProxy gpsProxy, RewardProxy rewardProxy) {
 		this.gpsProxy = gpsProxy;
-		this.rewardsCentral = rewardCentral;
+		this.rewardProxy = rewardProxy;
 	}
 	
 	public void setProximityBuffer(int proximityBuffer) {
@@ -139,7 +139,7 @@ public class RewardsService {
 	}
 	
 	private int getRewardPoints(Attraction attraction, User user) {
-		return rewardsCentral.getAttractionRewardPoints(attraction.attractionId, user.getUserId());
+		return rewardProxy.getAttractionRewardPoints(attraction.attractionId, user.getUserId());
 	}
 	
 	public double getDistance(Location loc1, Location loc2) {

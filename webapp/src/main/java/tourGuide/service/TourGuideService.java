@@ -40,7 +40,7 @@ import tripPricer.TripPricer;
 public class TourGuideService {
 
 	private final GpsProxy gpsProxy;
-	private final RewardsService rewardsService; 
+	private final RewardService rewardsService; 
 	private final TripPricer tripPricer = new TripPricer();
 	public final Tracker tracker;
 	boolean testMode = true;
@@ -52,10 +52,10 @@ public class TourGuideService {
 	 * the Tracker Thread is active by default.
 	 * 
 	 * @param gpsUtil the reference to bean GpsUtil.jar
-	 * @param rewardsService the reference to bean RewardsService.jar
+	 * @param rewardsService the reference to bean RewardService.jar
 	 */
 	@Autowired //this defines the default constructor for Spring
-	public TourGuideService(GpsProxy gpsProxy, RewardsService rewardsService) {
+	public TourGuideService(GpsProxy gpsProxy, RewardService rewardsService) {
 		this(gpsProxy, rewardsService, false);
 	}
 	
@@ -64,10 +64,10 @@ public class TourGuideService {
 	 * this is for test purpose as Tracker conflicts with tests by running permanent updates on users.
 	 * 
 	 * @param gpsUtil the reference to bean GpsUtil.jar
-	 * @param rewardsService the reference to bean RewardsService.jar
+	 * @param rewardsService the reference to bean RewardService.jar
 	 * @param stopTrackerAtStartup  boolean that allows Tracker to be directly stopped when true, this is for test only.
 	 */
-	public TourGuideService(GpsProxy gpsProxy, RewardsService rewardsService, boolean stopTrackerAtStartup) {
+	public TourGuideService(GpsProxy gpsProxy, RewardService rewardsService, boolean stopTrackerAtStartup) {
 		this.gpsProxy = gpsProxy;
 		this.rewardsService = rewardsService;
 
@@ -289,9 +289,7 @@ public class TourGuideService {
 	public UserPreferencesDTO patchUserPreferences(UserPreferencesDTO userPreferencesDTO) {
 		
 		User user = getUser(userPreferencesDTO.getUserName());
-		
-		
-		
+	
 		if (userPreferencesDTO.getNumberOfAdults()!=null) {
 			user.getUserPreferences().setNumberOfAdults(userPreferencesDTO.getNumberOfAdults());
 		}
@@ -306,7 +304,9 @@ public class TourGuideService {
 	}
 
 
-	//TODO: A INVESTIGUER
+	/**
+	 * Forces the Tracker thread to stop if the application is terminated.
+	 */
 	private void addShutDownHook() {
 		Runtime.getRuntime().addShutdownHook(new Thread() { 
 			public void run() {
