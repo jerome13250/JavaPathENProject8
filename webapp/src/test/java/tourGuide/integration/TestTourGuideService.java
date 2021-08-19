@@ -20,8 +20,10 @@ import tourGuide.model.user.User;
 import tourGuide.model.user.UserReward;
 import tourGuide.repository.GpsProxy;
 import tourGuide.repository.RewardProxy;
+import tourGuide.repository.TripPricerProxy;
 import tourGuide.repository.impl.GpsProxyDummyImpl;
 import tourGuide.repository.impl.RewardProxyDummyImpl;
+import tourGuide.repository.impl.TripPricerProxyDummyImpl;
 import tourGuide.service.RewardService;
 import tourGuide.service.TourGuideService;
 import tripPricer.Provider;
@@ -51,13 +53,15 @@ class TestTourGuideService {
 	@BeforeEach
 	public void setup() {
 		
-		//We need a dummy implementation since gps-api is external
+		//We create dummy implementations for external apis:
 		GpsProxy gpsProxy = new GpsProxyDummyImpl();
 		RewardProxy rewardProxy = new RewardProxyDummyImpl();
 		rewardsService = new RewardService(gpsProxy, rewardProxy);
+		TripPricerProxy tripPricerProxy = new TripPricerProxyDummyImpl();
+		
 		InternalTestHelper.setInternalUserNumber(0);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
-		tourGuideService = new TourGuideService(gpsProxy, rewardsService, true);
+		tourGuideService = new TourGuideService(gpsProxy, rewardsService, tripPricerProxy, true);
 
 		//objects for tests:
 		user = new User(UUID.randomUUID(), "john", "000", "john@tourGuide.com");
@@ -170,11 +174,13 @@ class TestTourGuideService {
 		user.addUserReward(userReward2);
 		tourGuideService.addUser(user);
 
-		//List<Provider> providers = tourGuideService.getTripDeals(user);
+		//ACT:
 		List<Provider> listProvider = tourGuideService.getTripDeals(user);
 		
-		//
-		assertEquals(5, listProvider.size());
+		//ASSERT:
+		assertEquals(2, listProvider.size());
+		assertEquals("123e4567-e89b-12d3-a456-426614174000", listProvider.get(0).tripId.toString());
+		assertEquals("123e4567-e89b-12d3-a456-426614174000", listProvider.get(1).tripId.toString());
 	}
 	
 	

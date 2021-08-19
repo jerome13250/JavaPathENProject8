@@ -31,6 +31,7 @@ import tourGuide.model.user.User;
 import tourGuide.model.user.UserPreferencesDTO;
 import tourGuide.model.user.UserReward;
 import tourGuide.repository.GpsProxy;
+import tourGuide.repository.TripPricerProxy;
 import tourGuide.tracker.Tracker;
 import tripPricer.Provider;
 import tripPricer.TripPricer;
@@ -41,7 +42,11 @@ public class TourGuideService {
 
 	private final GpsProxy gpsProxy;
 	private final RewardService rewardsService; 
+	
+	@Autowired
+	private final TripPricerProxy tripPricerProxy;
 	private final TripPricer tripPricer = new TripPricer();
+	
 	public final Tracker tracker;
 	boolean testMode = true;
 	//after multiple tests, 50 threads give best results, more threads do not improve processing time:
@@ -55,8 +60,8 @@ public class TourGuideService {
 	 * @param rewardsService the reference to bean RewardService.jar
 	 */
 	@Autowired //this defines the default constructor for Spring
-	public TourGuideService(GpsProxy gpsProxy, RewardService rewardsService) {
-		this(gpsProxy, rewardsService, false);
+	public TourGuideService(GpsProxy gpsProxy, RewardService rewardsService, TripPricerProxy tripPricerProxy) {
+		this(gpsProxy, rewardsService, tripPricerProxy, false);
 	}
 	
 	/**
@@ -67,9 +72,10 @@ public class TourGuideService {
 	 * @param rewardsService the reference to bean RewardService.jar
 	 * @param stopTrackerAtStartup  boolean that allows Tracker to be directly stopped when true, this is for test only.
 	 */
-	public TourGuideService(GpsProxy gpsProxy, RewardService rewardsService, boolean stopTrackerAtStartup) {
+	public TourGuideService(GpsProxy gpsProxy, RewardService rewardsService, TripPricerProxy tripPricerProxy, boolean stopTrackerAtStartup) {
 		this.gpsProxy = gpsProxy;
 		this.rewardsService = rewardsService;
+		this.tripPricerProxy = tripPricerProxy;
 
 		if(testMode) {
 			log.info("TestMode enabled");
@@ -152,8 +158,15 @@ public class TourGuideService {
 	//TODO: inconsistency in original project, tripPricer.getPrice uses user.getUserId() instead of UUID attractionId 
 	public List<Provider> getTripDeals(User user) {
 		int cumulatativeRewardPoints = user.getUserRewards().stream().mapToInt(i -> i.getRewardPoints()).sum();
+		
+		/*
 		List<Provider> providers = tripPricer.getPrice(tripPricerApiKey, user.getUserId(), user.getUserPreferences().getNumberOfAdults(), 
 				user.getUserPreferences().getNumberOfChildren(), user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);
+		*/
+		
+		List<Provider> providers = tripPricerProxy.getPrice(tripPricerApiKey, user.getUserId(), user.getUserPreferences().getNumberOfAdults(), 
+				user.getUserPreferences().getNumberOfChildren(), user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);
+		
 		user.setTripDeals(providers);
 		return providers;
 	}
@@ -169,8 +182,6 @@ public class TourGuideService {
 	 */
 	public VisitedLocation trackUserLocation(User user) {
 		
-		
-		//VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
 		VisitedLocation visitedLocation = gpsProxy.getVisitedLocation(user.getUserId());
 		
 		user.addToVisitedLocations(visitedLocation);

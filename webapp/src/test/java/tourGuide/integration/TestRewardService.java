@@ -18,10 +18,10 @@ import tourGuide.model.user.User;
 import tourGuide.model.user.UserReward;
 import tourGuide.repository.GpsProxy;
 import tourGuide.repository.RewardProxy;
+import tourGuide.repository.TripPricerProxy;
 import tourGuide.repository.impl.GpsProxyDummyImpl;
-import tourGuide.repository.impl.GpsProxyImpl;
 import tourGuide.repository.impl.RewardProxyDummyImpl;
-import tourGuide.repository.impl.RewardProxyImpl;
+import tourGuide.repository.impl.TripPricerProxyDummyImpl;
 import tourGuide.service.RewardService;
 import tourGuide.service.TourGuideService;
 
@@ -31,16 +31,20 @@ class TestRewardService {
 	RewardProxy rewardProxy;
 	RewardService rewardsService;
 	GpsProxy gpsProxy;
+	TripPricerProxy tripPricerProxy;
 	
 	@BeforeEach
 	public void setup() {
 		
+		//We create dummy implementations for external apis:
 		gpsProxy = new GpsProxyDummyImpl();
 		rewardProxy = new RewardProxyDummyImpl();
 		rewardsService = new RewardService(gpsProxy, rewardProxy);
+		tripPricerProxy = new TripPricerProxyDummyImpl();
+		
 		InternalTestHelper.setInternalUserNumber(0);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
-		tourGuideService = new TourGuideService(gpsProxy, rewardsService, true);
+		tourGuideService = new TourGuideService(gpsProxy, rewardsService, tripPricerProxy, true);
 
 	}
 	
@@ -83,7 +87,7 @@ class TestRewardService {
 		//to stay consistent with this existing test, tourGuideService is specific to this function with setInternalUserNumber(1):
 		InternalTestHelper.setInternalUserNumber(1);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
-		TourGuideService tourGuideService = new TourGuideService(gpsProxy, rewardsService, true);
+		TourGuideService tourGuideService = new TourGuideService(gpsProxy, rewardsService, tripPricerProxy, true);
 		
 		//ACT:
 		rewardsService.calculateRewardsMultiThread(tourGuideService.getAllUsers());

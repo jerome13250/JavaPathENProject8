@@ -25,7 +25,7 @@ public class GlobalExceptionHandlerController extends ResponseEntityExceptionHan
         return new ResponseEntity<>(response, ex.getStatus());
     }
     
-    @ExceptionHandler(Exception.class)//toutes les autres erreurs non gérées par le service sont interceptées ici
+    @ExceptionHandler(Exception.class)
     public ResponseEntity<BusinessResourceExceptionDTO> unknowError(HttpServletRequest req, Exception ex) {
         BusinessResourceExceptionDTO response = new BusinessResourceExceptionDTO();
         response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
