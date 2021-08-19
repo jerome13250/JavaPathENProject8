@@ -9,9 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Level;
@@ -19,11 +17,8 @@ import ch.qos.logback.classic.LoggerContext;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 import lombok.extern.slf4j.Slf4j;
-import rewardCentral.RewardCentral;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.model.user.User;
-import tourGuide.repository.GpsProxy;
-import tourGuide.repository.RewardProxy;
 import tourGuide.repository.impl.GpsProxyImpl;
 import tourGuide.repository.impl.RewardProxyImpl;
 import tourGuide.repository.impl.TripPricerProxyImpl;

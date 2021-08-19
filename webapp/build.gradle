@@ -2,6 +2,12 @@
 Allows us to declare the Gradle build's dependencies, such as third-party plugins and task classes.
 */
 
+//needed because tests do not use Springboot annotations we get : "error: package lombok.extern.slf4j does not exist"
+//https://stackoverflow.com/questions/57113091/adding-lombok-dependency-and-slf4j-does-not-let-use-logger/57113242
+plugins {
+	id 'io.freefair.lombok' version '4.1.6'
+}
+
 
 bootJar {
     baseName = 'tourGuide'
@@ -9,7 +15,7 @@ bootJar {
 }
 
 dependencies {
-	implementation files("$rootDir/libs/gpsUtil.jar", "$rootDir/libs/RewardCentral.jar", "$rootDir/libs/TripPricer.jar")
+	//implementation files("$rootDir/libs/gpsUtil.jar", "$rootDir/libs/RewardCentral.jar", "$rootDir/libs/TripPricer.jar")
 	implementation project(':commons')
 }
 

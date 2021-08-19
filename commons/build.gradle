@@ -11,3 +11,14 @@ jar {
     enabled = true
 }
 */
+
+
+
+
+/*Need to disable bootJar to avoid error: 
+	> Execution failed for task ':commons:bootJar'.
+	> Error while evaluating property 'mainClass' of task ':commons:bootJar'
+*/
+bootJar {
+	enabled = false
+}
