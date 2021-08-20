@@ -10,7 +10,7 @@ plugins {
 
 
 bootJar {
-    baseName = 'tourGuide'
+    baseName = 'webapp'
     version =  '1.0.0'
 }
 

@@ -1,0 +1,13 @@
+# From : https://stackoverflow.com/questions/28097064/dockerignore-ignore-everything-except-a-file-and-the-dockerfile
+
+# Ignore everything
+**
+
+# Allow jar files
+# note: we cannot use !**/*.jar because exception patterns in .dockerignore do not support wildcard directories
+# https://github.com/moby/moby/issues/30018
+
+!/gps-api/build/libs/gpsapi-1.0.0.jar
+!/reward-api/build/libs/rewardapi-1.0.0.jar
+!/trippricer-api/build/libs/trippricerapi-1.0.0.jar
+!/webapp/build/libs/webapp-1.0.0.jar
