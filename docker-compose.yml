@@ -1,0 +1,30 @@
+# dockercompose documentation : 
+# https://docs.docker.com/compose/compose-file/compose-file-v3/
+
+version: "3.9"
+services:
+  webapp:
+    build:
+      context: .
+      target: webapp
+    ports:
+      - "9000:9000"
+  gpsapi:
+    build:
+      context: .
+      target: gpsapi
+    ports:
+      - "9001:9001"
+  rewardapi:
+    build:
+      context: .
+      target: rewardapi
+    ports:
+      - "9002:9002"
+  trippricerapi:
+    build:
+      context: .
+      target: trippricerapi
+    ports:
+      - "9003:9003"
+

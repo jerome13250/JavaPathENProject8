@@ -1,3 +1,6 @@
+## This uses multi-stage build :
+## https://docs.docker.com/develop/develop-images/multistage-build/
+
 ###########################
 #GPS-API
 ###########################
@@ -36,7 +39,7 @@ RUN mkdir /tmp/app
 # copy JAR into image
 COPY ./trippricer-api/build/libs/trippricerapi-1.0.0.jar /tmp/app
 #api port
-EXPOSE 9002
+EXPOSE 9003
 # run java app:
 CMD java -jar /tmp/app/trippricerapi-1.0.0.jar
 
