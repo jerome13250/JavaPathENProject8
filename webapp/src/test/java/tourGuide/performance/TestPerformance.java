@@ -59,6 +59,7 @@ class TestPerformance {
 		//Since we do not use @SpringBootTest, the context and application.properties are not loaded
 		//we have to set log levels here otherwise we are flooded by DEBUG messages from HTTP or RestTemplate
 		setLogLevel("INFO", "tourGuide.repository.impl.GpsProxyImpl");
+		setLogLevel("INFO", "tourGuide.repository.impl.RewardProxyImpl");
 		setLogLevel("INFO", "org.springframework.web.client.RestTemplate");
 		setLogLevel("INFO", "org.springframework.web.HttpLogging");
 
@@ -84,7 +85,7 @@ class TestPerformance {
 	void highVolumeTrackLocation() {
 		//ARRANGE:
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
-		InternalTestHelper.setInternalUserNumber(100);
+		InternalTestHelper.setInternalUserNumber(1000);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
 		TourGuideService tourGuideService = new TourGuideService(gpsProxy, rewardsService, tripPricerProxy, true);
 		List<User> allUsers = tourGuideService.getAllUsers();
@@ -111,7 +112,7 @@ class TestPerformance {
 	void highVolumeGetRewards() {
 		//ARRANGE:
 		// Users should be incremented up to 100,000, and test finishes within 20 minutes
-		InternalTestHelper.setInternalUserNumber(20);
+		InternalTestHelper.setInternalUserNumber(1000);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
 		TourGuideService tourGuideService = new TourGuideService(gpsProxy, rewardsService, tripPricerProxy, true);
 		//Add the first attraction in GpsUtils internal list to all users:
