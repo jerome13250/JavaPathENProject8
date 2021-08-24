@@ -74,7 +74,12 @@ Check that you have :
    docker-compose up
    ```
 7. To access the application endpoints, open your browser, go to :
-	[Webapp home page](http://localhost:9000/)
+	[webapp Swagger](http://localhost:9000/swagger-ui/#/)
+	[gps-api Swagger](http://localhost:9001/swagger-ui/#/)
+	[reward-api Swagger](http://localhost:9002/swagger-ui/#/)
+	[trippricer-api Swagger](http://localhost:9003/swagger-ui/#/)
+	
+	
 	
 
 
