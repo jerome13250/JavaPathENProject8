@@ -16,13 +16,17 @@ import org.springframework.web.bind.annotation.RestController;
 import commons.model.ClosestAttractionsDTO;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import tourGuide.model.user.User;
 import tourGuide.model.user.UserPreferencesDTO;
 import tourGuide.model.user.UserReward;
 import tourGuide.service.TourGuideService;
 import tripPricer.Provider;
-
+@ApiModel
 @Slf4j
 @RestController
 public class TourGuideController {
@@ -30,7 +34,7 @@ public class TourGuideController {
 	@Autowired
 	TourGuideService tourGuideService;
 	
-		
+	@ApiOperation(value = "This url returns welcome message from TourGuide.")
     @GetMapping("/")
     public String index() {
         return "Greetings from TourGuide!";
@@ -43,8 +47,13 @@ public class TourGuideController {
      * @param userName the name of the user
      * @return VisitedLocation json
      */
+	@ApiOperation(value = "Return the last visited VisitedLocation for a specified user name.")
     @GetMapping("/getLocation") 
-    public Location getLocation(@RequestParam String userName) {
+    public Location getLocation(
+    		@ApiParam(
+					value = "User name.",
+					example = "internalUser1")
+    		@RequestParam String userName) {
     	VisitedLocation visitedLocation = tourGuideService.getUserLocation(getUser(userName));
 		return visitedLocation.location;
     }
@@ -63,8 +72,14 @@ public class TourGuideController {
      * @param userName the required user name
      * @return JSON object containing all required infos
      */
+	@ApiOperation(value = "Return the closest five tourist attractions to the user - no matter how far away they are -"
+			+ " for a specified user name.")
     @GetMapping("/getNearbyAttractions") 
-    public ClosestAttractionsDTO getNearbyAttractions(@RequestParam String userName) {
+    public ClosestAttractionsDTO getNearbyAttractions(
+    		@ApiParam(
+					value = "User name.",
+					example = "internalUser1")
+    		@RequestParam String userName) {
     	
     	return tourGuideService.getNearbyAttractions(userName);
     }
@@ -74,8 +89,13 @@ public class TourGuideController {
      * @param userName the user name
      * @return List of rewards for that user
      */
+	@ApiOperation(value = "Return all the Rewards for a specified user name.")
     @GetMapping("/getRewards") 
-    public List<UserReward> getRewards(@RequestParam String userName) {
+    public List<UserReward> getRewards(
+    		@ApiParam(
+					value = "User name.",
+					example = "internalUser1")
+    		@RequestParam String userName) {
     	return tourGuideService.getUserRewards(getUser(userName));
     }
     
@@ -93,8 +113,9 @@ public class TourGuideController {
      * }
      * </p>
      * 
-     * @return
+     * @return Map object with key=UUID of user and value=Location
      */
+	@ApiOperation(value = "Get the list of every user's most recent location as JSON.")
     @GetMapping("/getAllCurrentLocations")
     public Map<UUID,Location> getAllCurrentLocations() {
     	    	
@@ -109,8 +130,13 @@ public class TourGuideController {
      * @param userName
      * @return List of providers 
      */
+	@ApiOperation(value = "Return all the Rewards for a specified user name.")
     @GetMapping("/getTripDeals")
-    public List<Provider> getTripDeals(@RequestParam String userName) {
+    public List<Provider> getTripDeals(
+    		@ApiParam(
+					value = "User name.",
+					example = "internalUser1")
+    		@RequestParam String userName) {
     	List<Provider> providers = tourGuideService.getTripDeals(getUser(userName));
     	return providers;
     }
@@ -120,11 +146,12 @@ public class TourGuideController {
      * @param userPreferencesDTO with username and values to modify
      * @return the userPreferencesDTO result
      */
-    @PatchMapping(value = "/userPreferences")
+	@ApiOperation(value = "PATCH command that allows to update user preferencies.")
+	@PatchMapping(value = "/userPreferences")
 	public ResponseEntity<UserPreferencesDTO> patchUserPreferences(@RequestBody UserPreferencesDTO userPreferencesDTO) {
-		log.info("PATCH /userPreferences called");
+		log.debug("PATCH /userPreferences called");
 		UserPreferencesDTO userPreferencesDtoUpdated = tourGuideService.patchUserPreferences(userPreferencesDTO);
-		log.info("PATCH /userPreferences response : OK");
+		log.debug("PATCH /userPreferences response : OK");
 		return new ResponseEntity<>(userPreferencesDtoUpdated, HttpStatus.OK);
 	}
     

@@ -17,6 +17,8 @@ bootJar {
 dependencies {
 	//implementation files("$rootDir/libs/gpsUtil.jar", "$rootDir/libs/RewardCentral.jar", "$rootDir/libs/TripPricer.jar")
 	implementation project(':commons')
+	//Swagger:
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
 }
 
 

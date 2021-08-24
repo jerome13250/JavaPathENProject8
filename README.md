@@ -16,15 +16,16 @@ Project goals:
 * Modify performance load tests to use multithreaded solution developped for gpsUtil/RewardsCentral execution time.
 * Modify the method TourGuideController.getAllCurrentLocations according to the [TODO](https://github.com/OpenClassrooms-Student-Center/JavaPathENProject8/blob/master/TourGuide/src/main/java/tourGuide/TourGuideController.java#L56), and create unit test.
 
-
+### Global class diagram
 ![UML-class-diagram](https://raw.githubusercontent.com/jerome13250/JavaPathENProject8/master/images/classDiagram.gif)
 
-![database](https://github.com/jerome13250/paymybuddy/blob/master/images/PayMyBuddy_diagram.png)
 
 
 ### Built With
 
 * [Java 8](https://adoptopenjdk.net/)
+* [Docker](https://docs.docker.com/)
+
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -35,11 +36,17 @@ To get a local copy up and running follow these simple example steps:
 ### Prerequisites
 
 Check that you have : 
-* Java 11 installed
+* Java 8 installed
   ```sh
   java -version
   ```
+* For Windows Home Edition, use WSL2 (Windows subsystem Linux)
+  [How to install and run Docker natively on Windows 10 Home](https://www.padok.fr/en/blog/docker-windows-10)
 
+* Docker Desktop
+  [Install Docker Desktop on Windows](https://docs.docker.com/desktop/windows/install/)
+  
+  
 ### Installation
 
 1. Choose a directory
@@ -48,22 +55,26 @@ Check that you have :
    ```
 2. Clone the repo
    ```sh
-   git clone https://github.com/jerome13250/paymybuddy.git
+   git clone https://github.com/jerome13250/JavaPathENProject8.git
    ```
-3. Select the paymybuddy directory
+3. Select the JavaPathENProject8 directory
    ```sh
-   cd paymybuddy
+   cd JavaPathENProject8
    ```
-4. Package the application (fat jar file) using [maven wrapper](https://github.com/takari/maven-wrapper) provided in the folder, it downloads automatically the correct Maven version if it's not found.
+4. Assemble executable jar archives using gradle wrapper provided in the folder, it downloads automatically the correct Gradle version if necessary.
    ```sh
-   mvnw package
+   gradlew clean bootJar
    ```
-5. Execute the jar file
-   ```JS
-   java -jar ./target/paymybuddy-0.0.1-SNAPSHOT.jar
+5. On Windows system, use WSL2 (Windows subsystem Linux)
+   ```sh
+   wsl
    ```
-6. To access the application, open your browser, go to [http://localhost:8080](http://localhost:8080)
+6. Launch the docker-compose to launch the 4 components:
+   ```sh
+   docker-compose up
+   ```
+7. To access the application endpoints, open your browser, go to :
+	[Webapp home page](http://localhost:9000/)
+	
 
-7. Note that the first time, since you start with an empty database, you need to [register](http://localhost:8080/registration) some users to be able to do some operations.
 
-![homepage](https://github.com/jerome13250/paymybuddy/blob/master/images/PayMyBuddy_homepage.png)
