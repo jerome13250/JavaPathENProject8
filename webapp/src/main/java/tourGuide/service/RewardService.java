@@ -13,13 +13,11 @@ import org.springframework.stereotype.Service;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
-import lombok.extern.slf4j.Slf4j;
 import tourGuide.model.user.User;
 import tourGuide.model.user.UserReward;
 import tourGuide.repository.GpsProxy;
 import tourGuide.repository.RewardProxy;
 
-@Slf4j
 @Service
 public class RewardService {
 		
@@ -50,36 +48,28 @@ public class RewardService {
 	}
 	
 	/**
-	 * This function gets all VisitedLocation for a User, then gets all Attractions provided by GpsProxys.
-	 * Everytime we call this function, it checks on user location history (why all history ?), if it has 
-	 * no previous UserReward on specific attraction then if the attraction is close enough ( function nearAttraction )
-	 *  we add a Reward to the user.
+	 * This function gets the last VisitedLocation for a single user, then gets all Attractions provided by GpsProxys.
+	 * It checks, for the user last visited location, that if it has no previous UserReward on specific attraction
+	 * and if the attraction is close enough ( function nearAttraction ) we add a Reward to the user.
 	 * 
-	 * @param user
+	 * Note: on the original project the calculation was done on all the user visitedLocation history.
+	 * This has been modified to last visitedlocation only, since it is useless to recalculate rewards for all historic
+	 * visitedlocation everytime a new visitedlocation is added to a user.
+	 * 
+	 * @param user the requested user.
 	 */
-	@Deprecated
 	public void calculateRewards(User user) {
 		 
-		List<VisitedLocation> userLocations = user.getVisitedLocations(); 
-		List<Attraction> attractions = gpsProxy.getAttractions();
+		List<User> listWithOneUser = new ArrayList<>();
+		listWithOneUser.add(user);
+
+		calculateRewardsMultiThread(listWithOneUser);
 		
-		//TODO: this is stupid, rewards should be calculated on the last Location only. 
-		//Otherwise the more we have history the more we'll have to calculate distances.
-		for(VisitedLocation visitedLocation : userLocations) {
-			for(Attraction attraction : attractions) {
-				if(user.getUserRewards().stream().filter(r -> r.attraction.attractionName.equals(attraction.attractionName)).count() == 0) {
-					if(nearAttraction(visitedLocation, attraction)) {
-						user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
-						log.debug("user has rewards : {}", user.getUserName());
-					}
-				}
-			}
-		}
 	}
 	
 	/**
 	 * This function gets the last VisitedLocation for a list of users, then gets all Attractions provided by GpsProxys.
-	 * It checks for each user last visited location that if it has no previous UserReward on specific attraction
+	 * It checks, for each user last visited location, that if it has no previous UserReward on specific attraction
 	 * and if the attraction is close enough ( function nearAttraction ) we add a Reward to the user.
 	 * 
 	 * @param user
@@ -87,10 +77,10 @@ public class RewardService {
 	public void calculateRewardsMultiThread(List<User> userList) {
 
 		List<Attraction> attractions = gpsProxy.getAttractions();
-		List<Future> listFuture = new ArrayList<>();
+		List<Future<?>> listFuture = new ArrayList<>();
 
 		for(User user : userList) {
-			Future future = executorService.submit( () -> {
+			Future<?> future = executorService.submit( () -> {
 
 				for(Attraction attraction : attractions) {
 					//this condition is needed to avoid useless call to reward calculation that won't be stored...
@@ -99,7 +89,6 @@ public class RewardService {
 						VisitedLocation lastVisitedLocation = user.getVisitedLocations().get(user.getVisitedLocations().size()-1);
 						if(nearAttraction(lastVisitedLocation, attraction)) {
 							user.addUserReward(new UserReward(lastVisitedLocation, attraction, getRewardPoints(attraction, user)));
-							//log.debug("user has rewards : {}", user.getUserName());
 						}
 					}
 				}

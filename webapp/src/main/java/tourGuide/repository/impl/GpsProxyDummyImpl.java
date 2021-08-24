@@ -8,13 +8,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-
 import commons.model.AttractionDistance;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;

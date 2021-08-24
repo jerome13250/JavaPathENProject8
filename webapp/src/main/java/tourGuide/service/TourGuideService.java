@@ -20,12 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import commons.exception.BusinessResourceException;
 import commons.model.AttractionDistance;
 import commons.model.ClosestAttractionsDTO;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import lombok.extern.slf4j.Slf4j;
-import commons.exception.BusinessResourceException;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.model.user.User;
 import tourGuide.model.user.UserPreferencesDTO;
@@ -34,7 +34,6 @@ import tourGuide.repository.GpsProxy;
 import tourGuide.repository.TripPricerProxy;
 import tourGuide.tracker.Tracker;
 import tripPricer.Provider;
-import tripPricer.TripPricer;
 
 @Slf4j
 @Service
@@ -45,7 +44,6 @@ public class TourGuideService {
 	
 	@Autowired
 	private final TripPricerProxy tripPricerProxy;
-	private final TripPricer tripPricer = new TripPricer();
 	
 	public final Tracker tracker;
 	boolean testMode = true;
@@ -159,11 +157,6 @@ public class TourGuideService {
 	public List<Provider> getTripDeals(User user) {
 		int cumulatativeRewardPoints = user.getUserRewards().stream().mapToInt(i -> i.getRewardPoints()).sum();
 		
-		/*
-		List<Provider> providers = tripPricer.getPrice(tripPricerApiKey, user.getUserId(), user.getUserPreferences().getNumberOfAdults(), 
-				user.getUserPreferences().getNumberOfChildren(), user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);
-		*/
-		
 		List<Provider> providers = tripPricerProxy.getPrice(tripPricerApiKey, user.getUserId(), user.getUserPreferences().getNumberOfAdults(), 
 				user.getUserPreferences().getNumberOfChildren(), user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);
 		
@@ -198,11 +191,10 @@ public class TourGuideService {
 	 */
 	public void trackUserLocationMultiThread(List<User> userList) {
 
-		List<Future> listFuture = new ArrayList<>();
+		List<Future<?>> listFuture = new ArrayList<>();
 		for(User u: userList) {
-			Future future = executorService.submit( () -> {
+			Future<?> future = executorService.submit( () -> {
 				
-				//VisitedLocation visitedLocation = gpsUtil.getUserLocation(u.getUserId());
 				VisitedLocation visitedLocation = gpsProxy.getVisitedLocation(u.getUserId());
 				u.addToVisitedLocations(visitedLocation);
 			});
@@ -219,7 +211,7 @@ public class TourGuideService {
 		});
 		
 		//launch multithreaded calculateRewards:
-		rewardsService.calculateRewardsMultiThread(userList);;
+		rewardsService.calculateRewardsMultiThread(userList);
 		
 
 	}
@@ -284,9 +276,9 @@ public class TourGuideService {
 	public Map<UUID, Location> getAllCurrentLocations() {
 
 		Map<UUID, Location> mapUserUuidLocation = new HashMap<UUID, Location>();
-		internalUserMap.forEach((id, user) -> {
-			mapUserUuidLocation.put(user.getUserId(), getUserLocation(user).location);
-		});
+		internalUserMap.forEach((id, user) -> 
+			mapUserUuidLocation.put(user.getUserId(), getUserLocation(user).location)
+		);
 
 		return mapUserUuidLocation;
 
