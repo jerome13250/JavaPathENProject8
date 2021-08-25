@@ -40,10 +40,10 @@ Check that you have :
   ```sh
   java -version
   ```
-* For Windows Home Edition, use WSL2 (Windows subsystem Linux)
+* For Windows Home Edition, use WSL2 (Windows subsystem Linux)  
   [How to install and run Docker natively on Windows 10 Home](https://www.padok.fr/en/blog/docker-windows-10)
 
-* Docker Desktop
+* Docker Desktop  
   [Install Docker Desktop on Windows](https://docs.docker.com/desktop/windows/install/)
   
   
@@ -73,13 +73,13 @@ Check that you have :
    ```sh
    docker-compose up
    ```
-7. To access the application endpoints, open your browser, go to :
-	[webapp Swagger](http://localhost:9000/swagger-ui/#/)
-	[gps-api Swagger](http://localhost:9001/swagger-ui/#/)
-	[reward-api Swagger](http://localhost:9002/swagger-ui/#/)
-	[trippricer-api Swagger](http://localhost:9003/swagger-ui/#/)
+7. To access the application endpoints, open your browser, go to :  
+	[webapp Swagger](http://localhost:9000/swagger-ui/#/)  
+	[gps-api Swagger](http://localhost:9001/swagger-ui/#/)  
+	[reward-api Swagger](http://localhost:9002/swagger-ui/#/)  
+	[trippricer-api Swagger](http://localhost:9003/swagger-ui/#/)  
 	
-	
-	
+
+   
 
 
