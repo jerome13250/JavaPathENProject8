@@ -25,8 +25,12 @@ public class RewardProxyImpl implements RewardProxy {
 	@Value( "${rewardapi.apiUrl}" )
     private String rewardApiUrl;
 	
-	@Autowired
-    RestTemplate restTemplate;
+	RestTemplate restTemplate;
+    
+    @Autowired
+    public RewardProxyImpl(RestTemplate restTemplate){
+    	this.restTemplate = restTemplate;
+    }
 	
 	@Override
 	public Integer getAttractionRewardPoints(UUID attractionid, UUID userid) {

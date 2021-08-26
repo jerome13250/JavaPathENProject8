@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,6 +21,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class VisitedLocationDTO {
 
 	private UUID userId;

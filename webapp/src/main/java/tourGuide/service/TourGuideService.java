@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +47,10 @@ public class TourGuideService {
 	private final TripPricerProxy tripPricerProxy;
 	
 	public final Tracker tracker;
-	boolean testMode = true;
+	
+	@Value( "${TourGuideService.testMode}" )
+	boolean testMode;
+	
 	//after multiple tests, 50 threads give best results, more threads do not improve processing time:
 	private final ExecutorService executorService = Executors.newFixedThreadPool(50);
 
@@ -206,7 +210,7 @@ public class TourGuideService {
 			try {
 				f.get();
 			} catch (InterruptedException | ExecutionException e) {
-				log.debug(e.getMessage());
+				log.error(e.getMessage());
 				
 			}
 		});
@@ -334,10 +338,6 @@ public class TourGuideService {
 			String phone = "000";
 			String email = userName + "@tourGuide.com";
 			User user = new User(UUID.randomUUID(), userName, phone, email);
-			
-			//temp:
-			user.getUserPreferences().setNumberOfChildren(5);
-			
 			
 			generateUserLocationHistory(user);
 

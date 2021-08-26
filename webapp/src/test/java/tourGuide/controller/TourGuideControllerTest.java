@@ -20,6 +20,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
@@ -42,7 +43,12 @@ import tourGuide.service.TourGuideService;
 import tripPricer.Provider;
 
 //@WebMvcTest tells Spring Boot to instantiate only the web layer and not the entire context
+//not loaded: @Component, @Service and @Repository beans.
 @WebMvcTest(controllers = TourGuideController.class) 
+//To avoid error : No qualifying bean of type 'org.springframework.boot.web.client.RestTemplateBuilder' available
+//we need to add the annotation @AutoConfigureWebClient
+//https://stackoverflow.com/questions/41673383/springboot-webmvctest-autowiring-resttemplatebuilder
+@AutoConfigureWebClient
 class TourGuideControllerTest {
 
 	@Autowired

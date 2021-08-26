@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import gpsUtil.location.Attraction;
+import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.model.user.User;
@@ -84,10 +85,13 @@ class TestRewardService {
 	void nearAllAttractions() {
 		//ARRANGE:
 		rewardsService.setProximityBuffer(Integer.MAX_VALUE);
-		//to stay consistent with this existing test, tourGuideService is specific to this function with setInternalUserNumber(1):
-		InternalTestHelper.setInternalUserNumber(1);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
 		TourGuideService tourGuideService = new TourGuideService(gpsProxy, rewardsService, tripPricerProxy, true);
+		//Create 1 user:
+		UUID userid = UUID.randomUUID();
+		User user = new User(userid, "userName", "phone", "mail@email.com");
+		user.addToVisitedLocations(new VisitedLocation(userid, new Location(11.1,22.2), new Date()));
+		tourGuideService.addUser(user);
 		
 		//ACT:
 		rewardsService.calculateRewardsMultiThread(tourGuideService.getAllUsers());

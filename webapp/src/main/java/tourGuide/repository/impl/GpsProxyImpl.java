@@ -42,14 +42,18 @@ public class GpsProxyImpl implements GpsProxy {
     @Value( "${gpsapi.apiUrl}" )
     private String gpsApiUrl;
     
-    @Autowired
     RestTemplate restTemplate;
+    
+    @Autowired
+    public GpsProxyImpl(RestTemplate restTemplate){
+    	this.restTemplate = restTemplate;
+    }
     
     @Override
 	public VisitedLocation getVisitedLocation(UUID userid) {
 
     	String getVisitedLocationUrl = gpsApiUrl 
-    			+ "/visitedLocation?userid="
+    			+ "visitedLocation?userid="
     			+ userid;
     	
     	
@@ -71,14 +75,15 @@ public class GpsProxyImpl implements GpsProxy {
 	public List<AttractionDistance> getNearbyAttractions(User user, Integer numberOfAttraction) {
 		
     	String getNearbyAttractionsUrl = gpsApiUrl 
-    			+ "/closestAttractions?long="
+    			+ "closestAttractions?long="
     			+ user.getLastVisitedLocation().location.longitude
     			+ "&lat="
     			+ user.getLastVisitedLocation().location.latitude
     			+ "&number="
     			+ numberOfAttraction;
 
-    	RestTemplate restTemplate = new RestTemplate();
+    	log.info(getNearbyAttractionsUrl);
+    	
     	ResponseEntity<List<AttractionDistance>> response = restTemplate.exchange(
     			getNearbyAttractionsUrl,
     			HttpMethod.GET,
@@ -95,10 +100,8 @@ public class GpsProxyImpl implements GpsProxy {
 	@Override
 	public List<Attraction> getAttractions() {
 
-		String getNearbyAttractionsUrl = gpsApiUrl + "/attractions";
+		String getNearbyAttractionsUrl = gpsApiUrl + "attractions";
 
-
-    	RestTemplate restTemplate = new RestTemplate();
     	ResponseEntity<List<AttractionDTO>> response = restTemplate.exchange(
     			getNearbyAttractionsUrl,
     			HttpMethod.GET,

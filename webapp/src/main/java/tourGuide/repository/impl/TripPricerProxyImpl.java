@@ -28,8 +28,13 @@ public class TripPricerProxyImpl implements TripPricerProxy {
 	@Value( "${trippricerapi.apiUrl}" )
 	private String tripPricerApiUrl;
 
-	@Autowired
-    RestTemplate restTemplate;
+	RestTemplate restTemplate;
+    
+    @Autowired
+    public TripPricerProxyImpl(RestTemplate restTemplate){
+    	this.restTemplate = restTemplate;
+    }
+
 	
 	@Override
 	public List<Provider> getPrice(String apiKey, UUID attractionId, int adults, int children, int nightsStay, int rewardsPoints) {

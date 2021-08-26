@@ -11,6 +11,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.client.RestTemplate;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
@@ -66,16 +67,16 @@ class TestPerformance {
 		log.info("inside init");
 		
 		//ARRANGE:
-		gpsProxy = new GpsProxyImpl();
+		gpsProxy = new GpsProxyImpl(new RestTemplate());
 		//note : since spring boot is not used to create context, GpsProxyImpl.gpsApiUrl is unset. we need to set it:
 		gpsProxy.setGpsApiUrl("http://localhost:9001/");
 
-		rewardProxy = new RewardProxyImpl();
+		rewardProxy = new RewardProxyImpl(new RestTemplate());
 		//note : since spring boot is not used to create context, RewardProxyImpl.rewardApiUrl is unset. we need to set it:
 		rewardProxy.setRewardApiUrl("http://localhost:9002/");	
 		rewardsService = new RewardService(gpsProxy, rewardProxy);
 
-		tripPricerProxy = new TripPricerProxyImpl();
+		tripPricerProxy = new TripPricerProxyImpl(new RestTemplate());
 		//note : since spring boot is not used to create context, RewardProxyImpl.rewardApiUrl is unset. we need to set it:
 		tripPricerProxy.setTripPricerApiUrl("http://localhost:9003/");
 
@@ -85,7 +86,7 @@ class TestPerformance {
 	void highVolumeTrackLocation() {
 		//ARRANGE:
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
-		InternalTestHelper.setInternalUserNumber(10000);
+		InternalTestHelper.setInternalUserNumber(10);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
 		TourGuideService tourGuideService = new TourGuideService(gpsProxy, rewardsService, tripPricerProxy, true);
 		List<User> allUsers = tourGuideService.getAllUsers();
@@ -111,7 +112,7 @@ class TestPerformance {
 	void highVolumeGetRewards() {
 		//ARRANGE:
 		// Users should be incremented up to 100,000, and test finishes within 20 minutes
-		InternalTestHelper.setInternalUserNumber(10000);
+		InternalTestHelper.setInternalUserNumber(10);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
 		TourGuideService tourGuideService = new TourGuideService(gpsProxy, rewardsService, tripPricerProxy, true);
 		//Add the first attraction in GpsUtils internal list to all users:
