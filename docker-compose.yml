@@ -1,6 +1,9 @@
 # dockercompose documentation : 
 # https://docs.docker.com/compose/compose-file/compose-file-v3/
 
+# Need to wait for apis to be working before webapp setup, otherwise we get failures for internal user creation 
+# https://stackoverflow.com/questions/31746182/docker-compose-wait-for-container-x-before-starting-y/41854997#41854997
+
 version: "3.9"
 services:
   webapp:
@@ -9,22 +12,40 @@ services:
       target: webapp
     ports:
       - "9000:9000"
+    depends_on:
+      - gpsapi
+      - rewardapi
+      - trippricerapi
   gpsapi:
     build:
       context: .
       target: gpsapi
     ports:
       - "9001:9001"
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:9001"]
+        interval: 30s
+        timeout: 5s
+        retries: 5
   rewardapi:
     build:
       context: .
       target: rewardapi
     ports:
       - "9002:9002"
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:9002"]
+        interval: 30s
+        timeout: 5s
+        retries: 5
   trippricerapi:
     build:
       context: .
       target: trippricerapi
     ports:
       - "9003:9003"
-
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:9003"]
+        interval: 30s
+        timeout: 5s
+        retries: 5
