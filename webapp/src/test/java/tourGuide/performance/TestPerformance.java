@@ -85,7 +85,7 @@ class TestPerformance {
 	void highVolumeTrackLocation() {
 		//ARRANGE:
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
-		InternalTestHelper.setInternalUserNumber(1000);
+		InternalTestHelper.setInternalUserNumber(10000);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
 		TourGuideService tourGuideService = new TourGuideService(gpsProxy, rewardsService, tripPricerProxy, true);
 		List<User> allUsers = tourGuideService.getAllUsers();
@@ -107,12 +107,11 @@ class TestPerformance {
 		}
 	}
 
-
 	@Test
 	void highVolumeGetRewards() {
 		//ARRANGE:
 		// Users should be incremented up to 100,000, and test finishes within 20 minutes
-		InternalTestHelper.setInternalUserNumber(1000);
+		InternalTestHelper.setInternalUserNumber(10000);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
 		TourGuideService tourGuideService = new TourGuideService(gpsProxy, rewardsService, tripPricerProxy, true);
 		//Add the first attraction in GpsUtils internal list to all users:

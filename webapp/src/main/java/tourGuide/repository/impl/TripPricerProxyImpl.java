@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -27,6 +28,9 @@ public class TripPricerProxyImpl implements TripPricerProxy {
 	@Value( "${trippricerapi.apiUrl}" )
 	private String tripPricerApiUrl;
 
+	@Autowired
+    RestTemplate restTemplate;
+	
 	@Override
 	public List<Provider> getPrice(String apiKey, UUID attractionId, int adults, int children, int nightsStay, int rewardsPoints) {
 
@@ -39,7 +43,6 @@ public class TripPricerProxyImpl implements TripPricerProxy {
 				+ "nightsStay=" + nightsStay + "&"
 				+ "rewardsPoints=" + rewardsPoints;
 
-		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<List<ProviderDTO>> response = restTemplate.exchange(
 				url,
 				HttpMethod.GET,

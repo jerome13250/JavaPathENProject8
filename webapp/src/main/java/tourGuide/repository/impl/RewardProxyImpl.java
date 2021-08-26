@@ -2,6 +2,7 @@ package tourGuide.repository.impl;
 
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -24,6 +25,9 @@ public class RewardProxyImpl implements RewardProxy {
 	@Value( "${rewardapi.apiUrl}" )
     private String rewardApiUrl;
 	
+	@Autowired
+    RestTemplate restTemplate;
+	
 	@Override
 	public Integer getAttractionRewardPoints(UUID attractionid, UUID userid) {
 	
@@ -32,8 +36,6 @@ public class RewardProxyImpl implements RewardProxy {
     			+ "attractionid=" + attractionid + "&"
     			+ "userid=" + userid;
     	
-    	//TODO: create a bean for RestTemplate ????
-    	RestTemplate restTemplate = new RestTemplate();
     	ResponseEntity<Integer> response = restTemplate.exchange(
     			url,
     			HttpMethod.GET,

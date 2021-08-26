@@ -175,11 +175,12 @@ public class TourGuideService {
 	 */
 	public VisitedLocation trackUserLocation(User user) {
 		
-		VisitedLocation visitedLocation = gpsProxy.getVisitedLocation(user.getUserId());
+		List<User> listUser = new ArrayList<>();
+		listUser.add(user);
 		
-		user.addToVisitedLocations(visitedLocation);
-		rewardsService.calculateRewards(user);
-		return visitedLocation;
+		trackUserLocationMultiThread(listUser);
+		
+		return user.getVisitedLocations().get(user.getVisitedLocations().size()-1);
 	}
 
 	/**

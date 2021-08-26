@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -41,6 +42,9 @@ public class GpsProxyImpl implements GpsProxy {
     @Value( "${gpsapi.apiUrl}" )
     private String gpsApiUrl;
     
+    @Autowired
+    RestTemplate restTemplate;
+    
     @Override
 	public VisitedLocation getVisitedLocation(UUID userid) {
 
@@ -48,7 +52,7 @@ public class GpsProxyImpl implements GpsProxy {
     			+ "/visitedLocation?userid="
     			+ userid;
     	
-    	RestTemplate restTemplate = new RestTemplate();
+    	
     	ResponseEntity<VisitedLocationDTO> response = restTemplate.exchange(
     			getVisitedLocationUrl,
     			HttpMethod.GET,

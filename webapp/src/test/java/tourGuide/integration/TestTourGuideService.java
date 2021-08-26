@@ -17,6 +17,7 @@ import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.model.user.User;
+import tourGuide.model.user.UserPreferencesDTO;
 import tourGuide.model.user.UserReward;
 import tourGuide.repository.GpsProxy;
 import tourGuide.repository.RewardProxy;
@@ -34,7 +35,7 @@ class TestTourGuideService {
 	RewardService rewardsService;
 	
 	//reference to objects used in different tests:
-	User user;
+	User user1;
 	User user2;
 	Location userLocation;
 	Location userLocation2;
@@ -64,14 +65,14 @@ class TestTourGuideService {
 		tourGuideService = new TourGuideService(gpsProxy, rewardsService, tripPricerProxy, true);
 
 		//objects for tests:
-		user = new User(UUID.randomUUID(), "john", "000", "john@tourGuide.com");
+		user1 = new User(UUID.randomUUID(), "john", "000", "john@tourGuide.com");
 		user2 = new User(UUID.randomUUID(), "john2", "000", "john2@tourGuide.com");
 		userLocation = new Location(5.1, 6.2);
 		userLocation2 = new Location(20, 20);
 		userLocation3 = new Location(30, 30);
 		userLocation4 = new Location(40, 40);
-		visitedLocation = new VisitedLocation(user.getUserId(), userLocation, new Date());
-		visitedLocation2 = new VisitedLocation(user.getUserId(), userLocation2, new Date());
+		visitedLocation = new VisitedLocation(user1.getUserId(), userLocation, new Date());
+		visitedLocation2 = new VisitedLocation(user1.getUserId(), userLocation2, new Date());
 		visitedLocation3 = new VisitedLocation(user2.getUserId(), userLocation3, new Date());
 		visitedLocation4 = new VisitedLocation(user2.getUserId(), userLocation4, new Date());
 		attraction1 = new Attraction("attractionName1", "city1", "state1", 11.1, 22.2);
@@ -85,33 +86,33 @@ class TestTourGuideService {
 	void getUserLocation() {		
 		//ARRANGE:
 		//ACT:
-		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
+		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user1);
 		//ASSERT:
-		assertEquals(visitedLocation.userId,user.getUserId());
+		assertEquals(visitedLocation.userId,user1.getUserId());
 	}
 	
 	@Test
 	void addUser() {
 		//ARRANGE:
 		//ACT:
-		tourGuideService.addUser(user);
+		tourGuideService.addUser(user1);
 		tourGuideService.addUser(user2);
 		//ASSERT:
-		User retrivedUser = tourGuideService.getUser(user.getUserName());
+		User retrivedUser = tourGuideService.getUser(user1.getUserName());
 		User retrivedUser2 = tourGuideService.getUser(user2.getUserName());
-		assertEquals(user, retrivedUser);
+		assertEquals(user1, retrivedUser);
 		assertEquals(user2, retrivedUser2);
 	}
 	
 	@Test
 	void getAllUsers() {
 		//ARRANGE:
-		tourGuideService.addUser(user);
+		tourGuideService.addUser(user1);
 		tourGuideService.addUser(user2);
 		//ACT:
 		List<User> allUsers = tourGuideService.getAllUsers();
 		//ASSERT:
-		assertTrue(allUsers.contains(user));
+		assertTrue(allUsers.contains(user1));
 		assertTrue(allUsers.contains(user2));
 	}
 	
@@ -119,16 +120,16 @@ class TestTourGuideService {
 	void trackUser() {
 		//ARRANGE:
 		//ACT:
-		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
+		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user1);
 		//ASSERT:
-		assertEquals(user.getUserId(), visitedLocation.userId);
+		assertEquals(user1.getUserId(), visitedLocation.userId);
 	}
 	
 	@Test
 	void getNearbyAttractions() {
 		//ARRANGE:
-		user.addToVisitedLocations(visitedLocation);
-		tourGuideService.addUser(user);
+		user1.addToVisitedLocations(visitedLocation);
+		tourGuideService.addUser(user1);
 		rewardsService.calculateRewardsMultiThread(tourGuideService.getAllUsers());
 		
 		//ACT:
@@ -146,13 +147,13 @@ class TestTourGuideService {
 	@Test
 	void getAllCurrentLocations() {
 		//ARRANGE:
-		user.addToVisitedLocations(visitedLocation);
-		user.addToVisitedLocations(visitedLocation2);
+		user1.addToVisitedLocations(visitedLocation);
+		user1.addToVisitedLocations(visitedLocation2);
 		
 		user2.addToVisitedLocations(visitedLocation3);
 		user2.addToVisitedLocations(visitedLocation4);
 				
-		tourGuideService.addUser(user);
+		tourGuideService.addUser(user1);
 		tourGuideService.addUser(user2);
 		
 		//ACT:
@@ -160,8 +161,8 @@ class TestTourGuideService {
 
 		//ASSERT:
 		assertEquals(2,result.size());
-		assertTrue(result.containsKey(user.getUserId()));
-		assertEquals(userLocation2, result.get(user.getUserId()));
+		assertTrue(result.containsKey(user1.getUserId()));
+		assertEquals(userLocation2, result.get(user1.getUserId()));
 		assertTrue(result.containsKey(user2.getUserId()));
 		assertEquals(userLocation4, result.get(user2.getUserId()));
 		
@@ -170,12 +171,12 @@ class TestTourGuideService {
 	@Test
 	void getTripDeals() {
 		//ARRANGE:
-		user.addUserReward(userReward1);
-		user.addUserReward(userReward2);
-		tourGuideService.addUser(user);
+		user1.addUserReward(userReward1);
+		user1.addUserReward(userReward2);
+		tourGuideService.addUser(user1);
 
 		//ACT:
-		List<Provider> listProvider = tourGuideService.getTripDeals(user);
+		List<Provider> listProvider = tourGuideService.getTripDeals(user1);
 		
 		//ASSERT:
 		assertEquals(2, listProvider.size());
@@ -183,5 +184,22 @@ class TestTourGuideService {
 		assertEquals("123e4567-e89b-12d3-a456-426614174000", listProvider.get(1).tripId.toString());
 	}
 	
+	@Test 
+	void patchUserPreferencies() {
+		//ARRANGE:
+		tourGuideService.addUser(user1);
+		UserPreferencesDTO inputUserPreferencesDTO = new UserPreferencesDTO();
+		inputUserPreferencesDTO.setNumberOfAdults(3);
+		inputUserPreferencesDTO.setNumberOfChildren(10);
+		inputUserPreferencesDTO.setTripDuration(258);
+		inputUserPreferencesDTO.setUserName("john");
+		
+		//ACT:
+		UserPreferencesDTO returnedUserPreferencesDTO = tourGuideService.patchUserPreferences(inputUserPreferencesDTO);
+		
+		//ASSERT:
+		assertEquals(inputUserPreferencesDTO, returnedUserPreferencesDTO);
+
+	}
 	
 }
