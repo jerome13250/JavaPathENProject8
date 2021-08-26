@@ -28,7 +28,11 @@ public class AttractionDistance {
 	private Double distance;
 	private Integer rewardPoints;
 
-	
+	/**
+	 * constructor for AttractionDistance
+	 * @param attraction the attraction on which to calculate distance
+	 * @param distance the distance to the attraction
+	 */
 	public AttractionDistance(Attraction attraction, Double distance) {
 		this.attractionName = attraction.attractionName;
 		this.latitude = attraction.latitude;

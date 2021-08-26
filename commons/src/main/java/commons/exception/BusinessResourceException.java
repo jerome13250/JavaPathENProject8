@@ -2,59 +2,37 @@ package commons.exception;
 
 import org.springframework.http.HttpStatus;
 
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * Unchecked exception that is used for every kind of errors, it can be used in every sub-projects.
+ *<p>
+ *The original code from <a href="https://bnguimgo.developpez.com/tutoriels/spring/services-rest-avec-springboot-et-spring-resttemplate/?page=premiere-partie-le-serveur">
+ *developpez.com
+ *</a>
+ *</p>
+ *
+ */
+@Getter
+@Setter
 public class BusinessResourceException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
-    private Long resourceId;
     private String errorCode;
     private HttpStatus status;
 
-    public BusinessResourceException(String message) {
-        super(message);
-    }
-    
-    public BusinessResourceException(Long resourceId, String message) {
-        super(message);
-        this.resourceId = resourceId;
-    }
-    public BusinessResourceException(Long resourceId, String errorCode, String message) {
-        super(message);
-        this.resourceId = resourceId;
-        this.errorCode = errorCode;
-    }
-    
-    public BusinessResourceException(String errorCode, String message) {
-        super(message);
-        this.errorCode = errorCode;
-    }
-    
+    /**
+     * Constructor for BusinessResourceException
+     * @param errorCode the error code, a short string defining the error type.
+     * @param message the message error, a long string describing the error with useful info for debugging.
+     * @param status the http status that the API must repond when this error occurs.
+     */
     public BusinessResourceException(String errorCode, String message, HttpStatus status) {
         super(message);
         this.errorCode = errorCode;
         this.status = status;
     }
 
-    public Long getResourceId() {
-        return resourceId;
-    }
 
-    public void setResourceId(Long resourceId) {
-        this.resourceId = resourceId;
-    }
-
-    public String getErrorCode() {
-        return errorCode;
-    }
-
-    public void setErrorCode(String errorCode) {
-        this.errorCode = errorCode;
-    }    
-    
-    public HttpStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(HttpStatus status) {
-        this.status = status;
-    }
 }

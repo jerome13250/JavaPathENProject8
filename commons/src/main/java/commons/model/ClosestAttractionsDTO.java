@@ -10,12 +10,10 @@ import java.util.List;
 
 /**
  * This DTO class contains : 
- * <p>
  * <ul>
  * <li>The user's location lat/long</li>
  * <li>The list of closest attractions</li>
  * </ul>
- * </p>
  * 
  * @author jerome
  *
