@@ -2,6 +2,7 @@ package commons.model;
 
 import java.util.UUID;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,6 +18,7 @@ import tripPricer.Provider;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class ProviderDTO {
 	
 	private String name;

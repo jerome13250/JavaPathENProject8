@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
@@ -83,6 +84,7 @@ class TestPerformance {
 	}
 
 	@Test
+	@Disabled
 	void highVolumeTrackLocation() {
 		//ARRANGE:
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
@@ -109,6 +111,7 @@ class TestPerformance {
 	}
 
 	@Test
+	@Disabled
 	void highVolumeGetRewards() {
 		//ARRANGE:
 		// Users should be incremented up to 100,000, and test finishes within 20 minutes

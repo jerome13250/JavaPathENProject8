@@ -40,7 +40,7 @@ public class TripPricerProxyImpl implements TripPricerProxy {
 	public List<Provider> getPrice(String apiKey, UUID attractionId, int adults, int children, int nightsStay, int rewardsPoints) {
 
 		String url = tripPricerApiUrl 
-				+ "/price?"
+				+ "price?"
 				+ "apiKey=" + apiKey + "&"
 				+ "attractionId=" + attractionId  + "&"
 				+ "adults=" + adults + "&"

@@ -1,6 +1,7 @@
 package tourGuide.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Date;
@@ -11,6 +12,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import commons.exception.BusinessResourceException;
 import commons.model.ClosestAttractionsDTO;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
@@ -79,6 +81,14 @@ class TestTourGuideService {
 		attraction2 = new Attraction("attractionName2", "city2", "state2", 33.3, 44.4);
 		userReward1 = new UserReward(visitedLocation, attraction1, 111);
 		userReward2 = new UserReward(visitedLocation2, attraction2, 222);
+		
+	}
+	
+	@Test
+	void getUserTest_userUnknown() {
+		//ARRANGE:
+		//ACT+ASSERT:
+		assertThrows(BusinessResourceException.class,()->tourGuideService.getUser("unknown"));
 		
 	}
 	
@@ -199,6 +209,27 @@ class TestTourGuideService {
 		
 		//ASSERT:
 		assertEquals(inputUserPreferencesDTO, returnedUserPreferencesDTO);
+
+	}
+	
+	@Test 
+	void patchUserPreferencies_nullInfos() {
+		//ARRANGE:
+		tourGuideService.addUser(user1);
+		UserPreferencesDTO inputUserPreferencesDTO = new UserPreferencesDTO();
+		inputUserPreferencesDTO.setNumberOfAdults(null);
+		inputUserPreferencesDTO.setNumberOfChildren(null);
+		inputUserPreferencesDTO.setTripDuration(null);
+		inputUserPreferencesDTO.setUserName("john");
+		
+		//ACT:
+		UserPreferencesDTO returnedUserPreferencesDTO = tourGuideService.patchUserPreferences(inputUserPreferencesDTO);
+		
+		//ASSERT:
+		assertEquals(inputUserPreferencesDTO.getUserName(), returnedUserPreferencesDTO.getUserName());
+		assertEquals(1, returnedUserPreferencesDTO.getNumberOfAdults(), "unchanged => equals default 1");
+		assertEquals(0, returnedUserPreferencesDTO.getNumberOfChildren(), "unchanged => equals default 0");
+		assertEquals(1, returnedUserPreferencesDTO.getTripDuration(), "unchanged => equals default 1");
 
 	}
 	

@@ -36,7 +36,7 @@ public class RewardProxyImpl implements RewardProxy {
 	public Integer getAttractionRewardPoints(UUID attractionid, UUID userid) {
 	
     	String url = rewardApiUrl 
-    			+ "/attractionRewardPoints?"
+    			+ "attractionRewardPoints?"
     			+ "attractionid=" + attractionid + "&"
     			+ "userid=" + userid;
     	
