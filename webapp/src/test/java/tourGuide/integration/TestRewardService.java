@@ -45,7 +45,7 @@ class TestRewardService {
 		
 		InternalTestHelper.setInternalUserNumber(0);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
-		tourGuideService = new TourGuideService(gpsProxy, rewardsService, tripPricerProxy, true);
+		tourGuideService = new TourGuideService(gpsProxy, rewardsService, tripPricerProxy, false, true);
 
 	}
 	
@@ -86,7 +86,7 @@ class TestRewardService {
 		//ARRANGE:
 		rewardsService.setProximityBuffer(Integer.MAX_VALUE);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
-		TourGuideService tourGuideService = new TourGuideService(gpsProxy, rewardsService, tripPricerProxy, true);
+		TourGuideService tourGuideService = new TourGuideService(gpsProxy, rewardsService, tripPricerProxy, false, true);
 		//Create 1 user:
 		UUID userid = UUID.randomUUID();
 		User user = new User(userid, "userName", "phone", "mail@email.com");

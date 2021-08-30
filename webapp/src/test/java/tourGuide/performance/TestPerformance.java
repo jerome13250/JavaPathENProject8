@@ -90,7 +90,7 @@ class TestPerformance {
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
 		InternalTestHelper.setInternalUserNumber(10);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
-		TourGuideService tourGuideService = new TourGuideService(gpsProxy, rewardsService, tripPricerProxy, true);
+		TourGuideService tourGuideService = new TourGuideService(gpsProxy, rewardsService, tripPricerProxy, true, true);
 		List<User> allUsers = tourGuideService.getAllUsers();
 
 		//ACT:
@@ -117,7 +117,7 @@ class TestPerformance {
 		// Users should be incremented up to 100,000, and test finishes within 20 minutes
 		InternalTestHelper.setInternalUserNumber(10);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
-		TourGuideService tourGuideService = new TourGuideService(gpsProxy, rewardsService, tripPricerProxy, true);
+		TourGuideService tourGuideService = new TourGuideService(gpsProxy, rewardsService, tripPricerProxy, true, true);
 		//Add the first attraction in GpsUtils internal list to all users:
 		Attraction attraction = gpsProxy.getAttractions().get(0);
 		List<User> allUsers = tourGuideService.getAllUsers();

@@ -16,6 +16,8 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -42,14 +44,10 @@ public class TourGuideService {
 
 	private final GpsProxy gpsProxy;
 	private final RewardService rewardsService; 
-	
-	@Autowired
 	private final TripPricerProxy tripPricerProxy;
-	
 	public final Tracker tracker;
 	
-	@Value( "${TourGuideService.testMode}" )
-	boolean testMode;
+	//boolean testMode;
 	
 	//after multiple tests, 50 threads give best results, more threads do not improve processing time:
 	private final ExecutorService executorService = Executors.newFixedThreadPool(50);
@@ -61,11 +59,12 @@ public class TourGuideService {
 	 * @param gpsUtil the reference to bean GpsUtil.jar
 	 * @param rewardsService the reference to bean RewardService.jar
 	 */
+/*
 	@Autowired //this defines the default constructor for Spring
 	public TourGuideService(GpsProxy gpsProxy, RewardService rewardsService, TripPricerProxy tripPricerProxy) {
 		this(gpsProxy, rewardsService, tripPricerProxy, false);
 	}
-	
+*/	
 	/**
 	 * Constructor for TourGuideService, this version has a boolean stopTrackerAtStartup that allows Tracker to be directly stopped,
 	 * this is for test purpose as Tracker conflicts with tests by running permanent updates on users.
@@ -74,11 +73,21 @@ public class TourGuideService {
 	 * @param rewardsService the reference to bean RewardService.jar
 	 * @param stopTrackerAtStartup  boolean that allows Tracker to be directly stopped when true, this is for test only.
 	 */
-	public TourGuideService(GpsProxy gpsProxy, RewardService rewardsService, TripPricerProxy tripPricerProxy, boolean stopTrackerAtStartup) {
+	@Autowired
+	public TourGuideService(GpsProxy gpsProxy, 
+			RewardService rewardsService, 
+			TripPricerProxy tripPricerProxy, 
+			@Value( "${TourGuideService.testMode}" ) boolean testMode,
+			@Value( "${TourGuideService.stopTrackerAtStartup}" ) boolean stopTrackerAtStartup) {
 		this.gpsProxy = gpsProxy;
 		this.rewardsService = rewardsService;
 		this.tripPricerProxy = tripPricerProxy;
-
+		//this.testMode = testMode;
+		
+		log.info("testMode = {}",testMode);
+		log.info("stopTrackerAtStartup = {}",stopTrackerAtStartup);
+		
+		
 		if(testMode) {
 			log.info("TestMode enabled");
 			log.debug("Initializing users");
@@ -88,8 +97,10 @@ public class TourGuideService {
 		
 		tracker = new Tracker(this, stopTrackerAtStartup); //Tracker can be stopped at startup
 		addShutDownHook();
-	}
 
+	}
+	
+	
 	/**
 	 * Simply returns a reference to List User.userRewards 
 	 * @param user the current user

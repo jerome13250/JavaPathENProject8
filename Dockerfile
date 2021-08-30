@@ -1,11 +1,15 @@
 ## This uses multi-stage build :
 ## https://docs.docker.com/develop/develop-images/multistage-build/
 
+## Need to add curl to the alpine for healthcheck in docker-compose.yml file
+
 ###########################
 #GPS-API
 ###########################
 # Alpine Linux with OpenJDK JRE
 FROM openjdk:8-jre-alpine AS gpsapi
+# Install curl for healthcheck
+RUN apk --no-cache add curl
 # Add folder :
 RUN mkdir /tmp/app
 # copy JAR into image
@@ -20,6 +24,8 @@ CMD java -jar /tmp/app/gpsapi-1.0.0.jar
 ###########################
 # Alpine Linux with OpenJDK JRE
 FROM openjdk:8-jre-alpine AS rewardapi
+# Install curl for healthcheck
+RUN apk --no-cache add curl
 # Add folder :
 RUN mkdir /tmp/app
 # copy JAR into image
@@ -34,6 +40,8 @@ CMD java -jar /tmp/app/rewardapi-1.0.0.jar
 ###########################
 # Alpine Linux with OpenJDK JRE
 FROM openjdk:8-jre-alpine AS trippricerapi
+# Install curl for healthcheck
+RUN apk --no-cache add curl
 # Add folder :
 RUN mkdir /tmp/app
 # copy JAR into image

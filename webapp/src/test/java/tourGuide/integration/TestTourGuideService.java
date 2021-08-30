@@ -64,7 +64,7 @@ class TestTourGuideService {
 		
 		InternalTestHelper.setInternalUserNumber(0);
 		//Note that Tracker Thread is directly disabled thanks to stopTrackerAtStartup = true
-		tourGuideService = new TourGuideService(gpsProxy, rewardsService, tripPricerProxy, true);
+		tourGuideService = new TourGuideService(gpsProxy, rewardsService, tripPricerProxy, false, true);
 
 		//objects for tests:
 		user1 = new User(UUID.randomUUID(), "john", "000", "john@tourGuide.com");

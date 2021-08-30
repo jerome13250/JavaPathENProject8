@@ -1,10 +1,12 @@
-# dockercompose documentation : 
-# https://docs.docker.com/compose/compose-file/compose-file-v3/
-
 # Need to wait for apis to be working before webapp setup, otherwise we get failures for internal user creation 
 # https://stackoverflow.com/questions/31746182/docker-compose-wait-for-container-x-before-starting-y/41854997#41854997
 
-version: "3.9"
+# Downgrade from docker-compose file v3 to v2 to support depends_on / condition: service_healthy
+# https://stackoverflow.com/questions/49021851/docker-compose-error-wait-for-it-sh-no-such-file-or-directory
+
+
+
+version: "2.9"
 services:
   webapp:
     build:
@@ -13,9 +15,12 @@ services:
     ports:
       - "9000:9000"
     depends_on:
-      - gpsapi
-      - rewardapi
-      - trippricerapi
+      gpsapi :
+        condition: service_healthy
+      rewardapi :
+        condition: service_healthy
+      trippricerapi:
+        condition: service_healthy 
   gpsapi:
     build:
       context: .
@@ -23,7 +28,7 @@ services:
     ports:
       - "9001:9001"
     healthcheck:
-        test: ["CMD", "curl", "-f", "http://localhost:9001"]
+        test: ["CMD", "curl", "-f", "http://localhost:9001/actuator/health"]
         interval: 30s
         timeout: 5s
         retries: 5
@@ -34,7 +39,7 @@ services:
     ports:
       - "9002:9002"
     healthcheck:
-        test: ["CMD", "curl", "-f", "http://localhost:9002"]
+        test: ["CMD", "curl", "-f", "http://localhost:9002/actuator/health"]
         interval: 30s
         timeout: 5s
         retries: 5
@@ -45,7 +50,7 @@ services:
     ports:
       - "9003:9003"
     healthcheck:
-        test: ["CMD", "curl", "-f", "http://localhost:9003"]
+        test: ["CMD", "curl", "-f", "http://localhost:9003/actuator/health"]
         interval: 30s
         timeout: 5s
         retries: 5
