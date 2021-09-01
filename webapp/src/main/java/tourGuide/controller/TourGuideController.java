@@ -17,7 +17,6 @@ import commons.model.ClosestAttractionsDTO;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;

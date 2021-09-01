@@ -21,7 +21,6 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import commons.model.ProviderDTO;
-import lombok.extern.slf4j.Slf4j;
 import tourGuide.repository.impl.TripPricerProxyImpl;
 import tripPricer.Provider;
 
@@ -33,7 +32,6 @@ import tripPricer.Provider;
  * @author jerome
  *
  */
-@Slf4j
 @RestClientTest(TripPricerProxyImpl.class)
 class TripPricerProxyImplTest {
 

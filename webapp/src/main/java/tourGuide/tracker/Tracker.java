@@ -29,7 +29,7 @@ public class Tracker extends Thread {
 	 * Constructor for Tracker, submits itself to ExecutorService to get executed as a Thread.
 	 * 
 	 * @param tourGuideService that requires to create the Tracker.
-	 * @param stop boolean used to disable Tracker at creation, this allows to make 
+	 * @param stopTrackerAtStartup boolean used to disable Tracker at creation, this allows to make 
 	 * tests without tracker thread running.
 	 */
 	public Tracker(TourGuideService tourGuideService, boolean stopTrackerAtStartup) {

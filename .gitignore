@@ -6,6 +6,7 @@ HELP.md
 
 ## Remove JAVADOC
 **/javadoc
+**/doc
 
 ## Remove .GRADLE
 **/.gradle/

@@ -30,8 +30,10 @@ public class RewardService {
 	private final GpsProxy gpsProxy;
 	private final RewardProxy rewardProxy;
 	
-	//After tests, CachedThreadPool is the fastest.
-	private final ExecutorService executorService = Executors.newCachedThreadPool();
+	//After tests, CachedThreadPool is the fastest but with introduction of reward-api instead of RewardCentral jar 
+	//this generates error "java.net.BindException: Address already in use: connect" with 100000 users test.
+	// => newFixedThreadPool
+	private final ExecutorService executorService = Executors.newFixedThreadPool(200);
 	
 	@Autowired
 	public RewardService(GpsProxy gpsProxy, RewardProxy rewardProxy) {
@@ -72,7 +74,7 @@ public class RewardService {
 	 * It checks, for each user last visited location, that if it has no previous UserReward on specific attraction
 	 * and if the attraction is close enough ( function nearAttraction ) we add a Reward to the user.
 	 * 
-	 * @param user
+	 * @param userList list of users for reward calculation
 	 */
 	public void calculateRewardsMultiThread(List<User> userList) {
 

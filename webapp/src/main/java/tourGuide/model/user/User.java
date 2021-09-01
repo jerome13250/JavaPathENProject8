@@ -71,7 +71,7 @@ public class User {
 	
 	/**
 	 * Add a Reward to a User only if the user has not already a reward on the same attraction.
-	 * @param userReward
+	 * @param userReward the user reward object to add
 	 */
 	public void addUserReward(UserReward userReward) {
 

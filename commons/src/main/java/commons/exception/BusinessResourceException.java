@@ -19,8 +19,8 @@ import lombok.Setter;
 public class BusinessResourceException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
-    private String errorCode;
-    private HttpStatus status;
+    private final String errorCode;
+    private final HttpStatus status;
 
     /**
      * Constructor for BusinessResourceException

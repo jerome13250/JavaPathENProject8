@@ -16,8 +16,6 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -47,30 +45,16 @@ public class TourGuideService {
 	private final TripPricerProxy tripPricerProxy;
 	public final Tracker tracker;
 	
-	//boolean testMode;
-	
 	//after multiple tests, 50 threads give best results, more threads do not improve processing time:
 	private final ExecutorService executorService = Executors.newFixedThreadPool(50);
 
 	/**
-	 * Constructor for TourGuideService, this is the default constructor for Spring thanks to @Autowired. In this constructor 
-	 * the Tracker Thread is active by default.
-	 * 
-	 * @param gpsUtil the reference to bean GpsUtil.jar
-	 * @param rewardsService the reference to bean RewardService.jar
-	 */
-/*
-	@Autowired //this defines the default constructor for Spring
-	public TourGuideService(GpsProxy gpsProxy, RewardService rewardsService, TripPricerProxy tripPricerProxy) {
-		this(gpsProxy, rewardsService, tripPricerProxy, false);
-	}
-*/	
-	/**
-	 * Constructor for TourGuideService, this version has a boolean stopTrackerAtStartup that allows Tracker to be directly stopped,
+	 * Constructor for TourGuideService, it has a boolean stopTrackerAtStartup that allows Tracker to be directly stopped,
 	 * this is for test purpose as Tracker conflicts with tests by running permanent updates on users.
 	 * 
 	 * @param gpsUtil the reference to bean GpsUtil.jar
 	 * @param rewardsService the reference to bean RewardService.jar
+	 * @param testMode  boolean enables/disables internal users creation.
 	 * @param stopTrackerAtStartup  boolean that allows Tracker to be directly stopped when true, this is for test only.
 	 */
 	@Autowired
@@ -291,7 +275,7 @@ public class TourGuideService {
 	 */
 	public Map<UUID, Location> getAllCurrentLocations() {
 
-		Map<UUID, Location> mapUserUuidLocation = new HashMap<UUID, Location>();
+		Map<UUID, Location> mapUserUuidLocation = new HashMap<>();
 		internalUserMap.forEach((id, user) -> 
 			mapUserUuidLocation.put(user.getUserId(), getUserLocation(user).location)
 		);

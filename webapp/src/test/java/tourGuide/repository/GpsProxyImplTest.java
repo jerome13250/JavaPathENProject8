@@ -1,7 +1,6 @@
 package tourGuide.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
@@ -13,7 +12,6 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,7 +27,6 @@ import commons.model.VisitedLocationDTO;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
-import lombok.extern.slf4j.Slf4j;
 import tourGuide.model.user.User;
 import tourGuide.repository.impl.GpsProxyImpl;
 
@@ -41,7 +38,6 @@ import tourGuide.repository.impl.GpsProxyImpl;
  * @author jerome
  *
  */
-@Slf4j
 @RestClientTest(GpsProxyImpl.class)
 class GpsProxyImplTest {
 
