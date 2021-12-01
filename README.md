@@ -17,7 +17,7 @@ Project goals:
 * Modify the method TourGuideController.getAllCurrentLocations according to the [TODO](https://github.com/OpenClassrooms-Student-Center/JavaPathENProject8/blob/master/TourGuide/src/main/java/tourGuide/TourGuideController.java#L56), and create unit test.
 
 ### Global class diagram
-![UML-class-diagram](https://raw.githubusercontent.com/jerome13250/JavaPathENProject8/master/images/classDiagram.gif)
+![UML-class-diagram](https://raw.githubusercontent.com/jerome13250/JavaPathENProject8/master/images/classdiagram.gif)
 
 
 
